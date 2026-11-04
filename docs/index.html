@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>写真泥棒 · 搬运与洗稿黑榜</title>
+  <meta name="description" content="收录小红书、抖音、微信公众号上搬运、洗稿他人作品的账号，每条均附原作对照。">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%23120d0c'/%3E%3Ccircle cx='16' cy='16' r='8' fill='none' stroke='%23e5392f' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='2.5' fill='%23e5392f'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="masthead">
+    <p class="edge-print" aria-hidden="true"><span>SHADORO 400</span><span>▸ 1A</span><span>SAFELIGHT ONLY</span></p>
+    <h1>写真泥棒</h1>
+    <p class="romaji">SHASHIN DOROBŌ <span>／</span> 照片贼名录</p>
+    <p class="lead">作品被搬走、被洗稿，换个账号又是一条“原创”。<br>这里把底片冲出来：谁拿了谁的，一格一格，都有原作对照。</p>
+    <dl class="tally">
+      <div><dt>在榜账号</dt><dd id="total-users">–</dd></div>
+      <div><dt>收录作品</dt><dd id="total-works">–</dd></div>
+    </dl>
+  </header>
+
+  <main>
+    <section class="inspect" aria-label="按 ID 查询">
+      <label for="search">查验底片</label>
+      <div class="search-box">
+        <input id="search" type="search" placeholder="用户 ID、平台号、昵称或个人页链接" autocomplete="off" spellcheck="false">
+      </div>
+      <p id="verdict" class="verdict" role="status" aria-live="polite" hidden></p>
+    </section>
+
+    <div class="tabs" id="tabs" role="group" aria-label="按平台筛选"></div>
+
+    <section class="roll" aria-label="榜单">
+      <ol id="board" class="strip"></ol>
+      <p id="empty" class="empty" hidden></p>
+    </section>
+  </main>
+
+  <footer class="colophon">
+    <p>榜单按收录作品数从高到低排列，同一账号的同一作品只计一次。收录仅依据公开作品链接，展开任一账号可核对原作与被收录作品。</p>
+    <p>如认为收录有误，请提供依据，<a href="https://github.com/Desgard/shadoro/issues" target="_blank" rel="noopener noreferrer">提交 Issue 申请更正</a>。</p>
+  </footer>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>
