@@ -4,12 +4,17 @@
   "private": true,
   "description": "写真泥棒：搬运、洗稿账号黑榜（GitHub Pages 静态站）",
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "add": "node scripts/cli.mjs add",
     "remove": "node scripts/cli.mjs remove",
     "build": "node scripts/cli.mjs build",
     "dev": "python3 -m http.server 8317 --directory docs",
     "test": "node --test"
+  },
+  "dependencies": {
+    "yaml": "^2.9.1"
   }
 }

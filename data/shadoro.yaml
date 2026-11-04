@@ -1,0 +1,13 @@
+# Shadoro 唯一数据源。手动修改后运行 npm run build 重新生成 docs/leaderboard.json。
+
+# 作者信息，显示在页面最下方。platform 决定图标，目前内置 xiaohongshu。
+author:
+  sns:
+    - platform: xiaohongshu
+      title: 在小红书关注作者
+      description: 觉得这张榜单有用？来小红书关注我。
+      cta: 去关注
+      url: https://www.xiaohongshu.com/user/profile/60c6a0cb0000000001009792
+
+# 收录记录，通常由 npm run add 写入。
+records: []

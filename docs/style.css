@@ -229,6 +229,7 @@ h1 {
   padding: 0 20px 52px;
 }
 .author .edge-print { margin-bottom: 12px; }
+.author-cards { display: grid; gap: 10px; }
 
 .author-card {
   display: flex;
@@ -243,7 +244,7 @@ h1 {
 }
 .author-card:hover { border-color: var(--safelight); box-shadow: 0 0 26px var(--safelight-soft); }
 
-.xhs-icon { flex: none; width: 56px; height: 56px; }
+.sns-icon { flex: none; width: 56px; height: 56px; }
 .author-text { flex: 1; min-width: 0; }
 .author-text strong { display: block; font: 700 18px/1.4 var(--serif); }
 .author-text small { display: block; color: var(--muted); font-size: 13px; }

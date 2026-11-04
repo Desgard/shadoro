@@ -7,7 +7,7 @@
 
 ## 收录
 
-需要 Node.js 20 及以上，无其他依赖。
+需要 Node.js 20 及以上，首次使用先运行 `npm install`。
 
 ```bash
 npm run add -- "<搬运作品链接>" "<原作链接>"
@@ -16,7 +16,7 @@ npm run add -- "<搬运作品链接>" "<原作链接>"
 链接也可以直接粘贴 App 的分享文案（整段加引号），脚本会从中取出链接并跟随短链。原作可以是任意平台。
 不带参数运行 `npm run add` 会逐项询问。在终端运行且未指定 `--type` 时，脚本会询问类型，直接回车选直接搬运。
 
-脚本提取发布者的昵称、ID、个人页和平台，写入 `data/records.json`，重新生成 `docs/leaderboard.json`，
+脚本提取发布者的昵称、ID、个人页和平台，写入 `data/shadoro.yaml`，重新生成 `docs/leaderboard.json`，
 并输出此人的累计次数和名次。之后提交并推送即可更新线上榜单：
 
 ```bash
@@ -33,7 +33,14 @@ git add data docs && git commit -m "收录：<昵称>" && git push
 | `--alias <ID>` | 小红书号、抖音号等公开 ID，可被搜索 |
 | `--name <昵称> --profile <个人页>` | 手动指定发布者，跳过自动提取 |
 
-撤销一条收录：`npm run remove -- "<搬运作品链接>"`。手动改过 `data/records.json` 后运行 `npm run build`。
+撤销一条收录：`npm run remove -- "<搬运作品链接>"`。
+## 数据
+
+所有数据都在 [`data/shadoro.yaml`](data/shadoro.yaml)：`records` 是收录记录，`author` 是页面底部的作者卡片。
+GitHub Pages 只发布 `docs/`，页面读取的是由 YAML 生成的 `docs/leaderboard.json`，这个文件不要手改。
+手动改过 YAML 后运行 `npm run build`，再提交 `data/` 和 `docs/`。
+
+在 `author.sns` 下增加条目就能增加作者卡片；目前内置小红书图标，其他平台需要在 `docs/app.js` 的 `SNS_ICONS` 里加图标。
 
 ### 各平台提取情况
 

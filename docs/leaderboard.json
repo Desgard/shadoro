@@ -1,4 +1,15 @@
 {
+  "author": {
+    "sns": [
+      {
+        "platform": "xiaohongshu",
+        "title": "在小红书关注作者",
+        "description": "觉得这张榜单有用？来小红书关注我。",
+        "cta": "去关注",
+        "url": "https://www.xiaohongshu.com/user/profile/60c6a0cb0000000001009792"
+      }
+    ]
+  },
   "totalWorks": 0,
   "totalUsers": 0,
   "entries": []

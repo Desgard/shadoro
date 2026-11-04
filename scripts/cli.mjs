@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFile, writeFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { fileURLToPath } from 'node:url';
@@ -18,15 +18,16 @@ import {
   userIdFromProfile,
 } from './extract.mjs';
 import { buildLeaderboard } from './leaderboard.mjs';
+import { loadStore, saveRecords } from './store.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const RECORDS_PATH = join(ROOT, 'data', 'records.json');
+const STORE_PATH = join(ROOT, 'data', 'shadoro.yaml');
 const LEADERBOARD_PATH = join(ROOT, 'docs', 'leaderboard.json');
 
 const USAGE = `用法：
   npm run add -- <搬运链接> <原作链接> [选项]   收录一条（不带链接则逐项询问）
   npm run remove -- <搬运链接>                  撤销一条收录
-  npm run build                                 由 data/records.json 重新生成榜单
+  npm run build                                 由 data/shadoro.yaml 重新生成榜单
 
 add 选项：
   --type <类型>         直接搬运、改图搬运、AI融图（或序号 1-3），默认 直接搬运
@@ -42,14 +43,10 @@ const fail = (message) => {
   process.exit(1);
 };
 
-async function loadRecords() {
-  return JSON.parse(await readFile(RECORDS_PATH, 'utf8'));
-}
-
-async function save(records) {
+async function save({ doc, author, records }) {
   const leaderboard = buildLeaderboard(records);
-  await writeFile(RECORDS_PATH, `${JSON.stringify(records, null, 2)}\n`);
-  await writeFile(LEADERBOARD_PATH, `${JSON.stringify(leaderboard, null, 2)}\n`);
+  await saveRecords(STORE_PATH, doc, records);
+  await writeFile(LEADERBOARD_PATH, `${JSON.stringify({ author, ...leaderboard }, null, 2)}\n`);
   return leaderboard;
 }
 
@@ -109,7 +106,8 @@ async function add(positionals, values) {
     const originalKey = detectPlatform(originalUrl) && canonicalWork(detectPlatform(originalUrl), originalUrl)?.key;
     if (originalUrl === workUrl || originalKey === work.key) fail('搬运链接与原作链接指向同一作品');
 
-    const records = await loadRecords();
+    const store = await loadStore(STORE_PATH);
+    const { records } = store;
     const existing = records.find((r) => r.id === work.key || r.workUrl === work.url);
     if (existing) {
       console.log(`· 该作品已收录（${existing.addedAt}，${existing.user.name}），未重复计数`);
@@ -156,7 +154,7 @@ async function add(positionals, values) {
       source,
       addedAt: values.date ?? today(),
     });
-    const leaderboard = await save(records);
+    const leaderboard = await save(store);
     const entry = leaderboard.entries.find((e) => e.key === `${platform}:${user.id}`);
     console.log(`✔ 已收录：${user.name}（${PLATFORMS[platform].label}）`);
     console.log(`  累计 ${entry.count} 次，当前第 ${entry.rank} 名（共 ${leaderboard.totalUsers} 人）`);
@@ -173,10 +171,11 @@ async function remove(positionals) {
   const url = await resolveUrl(input);
   const platform = detectPlatform(url);
   const work = platform ? canonicalWork(platform, url) : null;
-  const records = await loadRecords();
+  const store = await loadStore(STORE_PATH);
+  const { records } = store;
   const kept = records.filter((r) => r.id !== work?.key && r.workUrl !== work?.url);
   if (kept.length === records.length) fail(`未找到该收录：${url}`);
-  await save(kept);
+  await save({ ...store, records: kept });
   console.log(`✔ 已撤销 ${records.length - kept.length} 条收录`);
 }
 
@@ -198,5 +197,5 @@ const [command, ...args] = positionals;
 if (values.help || !command) console.log(USAGE);
 else if (command === 'add') await add(args, values);
 else if (command === 'remove') await remove(args);
-else if (command === 'build') console.log(`✔ 榜单共 ${(await save(await loadRecords())).totalUsers} 人`);
+else if (command === 'build') console.log(`✔ 榜单共 ${(await save(await loadStore(STORE_PATH))).totalUsers} 人`);
 else fail(USAGE);

@@ -1,6 +1,12 @@
 const PLATFORM_LABELS = { xiaohongshu: '小红书', douyin: '抖音', wechat: '微信公众号' };
 const TOP_RANK = 3;
 const ANIMATED_FRAMES = 14;
+const SNS_ICONS = {
+  xiaohongshu: `<svg class="sns-icon" viewBox="0 0 64 64" role="img" aria-label="小红书" xmlns="http://www.w3.org/2000/svg">
+    <rect width="64" height="64" rx="14" fill="#ff2442"/>
+    <text x="32" y="39.5" fill="#fff" font-size="16.5" font-weight="700" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif">小红书</text>
+  </svg>`,
+};
 
 const $ = (id) => document.getElementById(id);
 const board = $('board');
@@ -154,6 +160,23 @@ function render() {
   empty.textContent = '暗房里还没有这卷底片。';
 }
 
+function renderAuthor(author) {
+  const cards = (author?.sns ?? []).map((sns) => {
+    const card = link(sns.url, '');
+    if (card.tagName !== 'A') return null;
+    card.className = 'author-card';
+    card.rel = 'noopener noreferrer';
+    card.insertAdjacentHTML('afterbegin', SNS_ICONS[sns.platform] ?? '');
+    const text = el('span', 'author-text');
+    text.append(el('strong', '', sns.title ?? ''), el('small', '', sns.description ?? ''));
+    card.append(text);
+    if (sns.cta) card.append(el('span', 'author-cta', `${sns.cta} ↗`));
+    return card;
+  });
+  $('author-cards').replaceChildren(...cards.filter(Boolean));
+  $('author').hidden = !$('author-cards').children.length;
+}
+
 async function main() {
   search.addEventListener('input', render);
   try {
@@ -161,6 +184,7 @@ async function main() {
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     const data = await response.json();
     entries = data.entries;
+    renderAuthor(data.author);
     $('total-users').textContent = data.totalUsers;
     $('total-works').textContent = data.totalWorks;
     // 显影动画只在首次加载时播放，搜索和筛选时不重播。
