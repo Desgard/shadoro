@@ -71,11 +71,11 @@ npm run sync
 脚本不会自动提交，运行结束后照常提交并推送 `data/` 和 `docs/`。
 ## 数据
 
-所有数据都在 [`data/shadoro.yaml`](data/shadoro.yaml)：`records` 是收录记录，`author` 是页面底部的作者卡片。
+所有数据都在 [`data/shadoro.yaml`](data/shadoro.yaml)：`records` 是收录记录，`author` 是页面底部的作者链接。
 GitHub Pages 只发布 `docs/`，页面读取的是由 YAML 生成的 `docs/leaderboard.json`，这个文件不要手改。
 手动改过 YAML 后运行 `npm run build`，再提交 `data/` 和 `docs/`。
 
-在 `author.sns` 下增加条目就能增加作者卡片；目前内置小红书图标，其他平台需要在 `docs/app.js` 的 `SNS_ICONS` 里加图标。
+在 `author.sns` 下增加条目就能增加作者链接，每一条共用 `author.avatar` 头像。
 
 ### 各平台提取情况
 

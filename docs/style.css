@@ -196,13 +196,12 @@ h1 {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+/* ID 是账号唯一不变的标识，窄屏换行也要显示完整。 */
 .who small {
   display: block;
-  overflow: hidden;
   color: var(--muted);
   font: 400 12.5px/1.5 var(--mono);
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow-wrap: anywhere;
 }
 
 .count { font: 700 30px/1 var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
@@ -243,27 +242,25 @@ h1 {
   margin-inline: auto;
   padding: 0 20px 52px;
 }
-.author .edge-print { margin-bottom: 12px; }
-.author-cards { display: grid; gap: 10px; }
+.author .edge-print { margin-bottom: 10px; }
+.author-cards { display: grid; gap: 4px; }
 
+/* 刻意做成一行小字，避免和榜单条目混淆。 */
 .author-card {
   display: flex;
   align-items: center;
-  gap: 16px;
-  padding: 16px;
-  border: 1px solid var(--line);
-  border-radius: 2px;
-  background: var(--film);
+  gap: 8px;
+  color: var(--muted);
+  font-size: 12.5px;
+  line-height: 1.5;
   text-decoration: none;
-  transition: border-color .15s, box-shadow .15s;
 }
-.author-card:hover { border-color: var(--safelight); box-shadow: 0 0 26px var(--safelight-soft); }
-
-.sns-icon { flex: none; width: 56px; height: 56px; }
-.author-text { flex: 1; min-width: 0; }
-.author-text strong { display: block; font: 700 18px/1.4 var(--serif); }
-.author-text small { display: block; color: var(--muted); font-size: 13px; }
-.author-cta { flex: none; color: var(--amber); font-size: 14px; font-weight: 600; }
+.author-card .avatar { flex: none; width: 24px; height: 24px; font-size: 11px; }
+.author-text { min-width: 0; }
+.author-text strong { font-weight: 400; color: var(--paper); }
+.author-text small { margin-left: .6em; font-size: inherit; }
+.author-cta { flex: none; margin-left: auto; color: var(--amber); }
+.author-card:hover .author-text strong { text-decoration: underline; }
 
 @media (max-width: 560px) {
   :root { --sprocket: 24px; }
@@ -273,7 +270,7 @@ h1 {
   .lead { font-size: 16px; }
   .lead br { display: none; }
   .author { padding-inline: 14px; }
-  .author-cta { display: none; }
+  .author-cta, .author-text small { display: none; }
   .strip::before { left: 5px; }
   .strip::after { right: 5px; }
   .strip::before, .strip::after { width: 12px; }

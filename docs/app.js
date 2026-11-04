@@ -1,12 +1,6 @@
 const PLATFORM_LABELS = { xiaohongshu: '小红书', douyin: '抖音', wechat: '微信公众号' };
 const TOP_RANK = 3;
 const ANIMATED_FRAMES = 14;
-const SNS_ICONS = {
-  xiaohongshu: `<svg class="sns-icon" viewBox="0 0 64 64" role="img" aria-label="小红书" xmlns="http://www.w3.org/2000/svg">
-    <rect width="64" height="64" rx="14" fill="#ff2442"/>
-    <text x="32" y="39.5" fill="#fff" font-size="16.5" font-weight="700" text-anchor="middle" font-family="-apple-system, 'PingFang SC', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif">小红书</text>
-  </svg>`,
-};
 
 const $ = (id) => document.getElementById(id);
 const board = $('board');
@@ -97,7 +91,7 @@ function renderEntry(entry, index) {
   const who = el('span', 'who');
   who.append(
     el('strong', '', entry.name),
-    el('small', '', `${PLATFORM_LABELS[entry.platform]} · ${entry.alias || entry.id}`),
+    el('small', '', `${PLATFORM_LABELS[entry.platform]} · ${entry.id}`),
   );
   const count = el('span', 'count', entry.count);
   count.prepend(el('small', '', '做贼'));
@@ -106,10 +100,9 @@ function renderEntry(entry, index) {
 
   const evidence = el('div', 'evidence');
   const identity = el('p', 'identity');
-  identity.append(`ID：${entry.id}`);
-  if (entry.alias) identity.append(` · 平台号：${entry.alias}`);
-  if (entry.formerNames.length) identity.append(` · 曾用名：${entry.formerNames.join('、')}`);
-  identity.append(' · ', link(entry.profileUrl, '个人页 ↗'));
+  if (entry.alias) identity.append(`平台号：${entry.alias} · `);
+  if (entry.formerNames.length) identity.append(`曾用名：${entry.formerNames.join('、')} · `);
+  identity.append(link(entry.profileUrl, '个人页 ↗'));
   const works = el('ul', 'works');
   works.append(...entry.works.map(renderWork));
   evidence.append(identity, works);
@@ -183,10 +176,9 @@ function renderAuthor(author) {
     if (card.tagName !== 'A') return null;
     card.className = 'author-card';
     card.rel = 'noopener noreferrer';
-    card.insertAdjacentHTML('afterbegin', SNS_ICONS[sns.platform] ?? '');
     const text = el('span', 'author-text');
     text.append(el('strong', '', sns.title ?? ''), el('small', '', sns.description ?? ''));
-    card.append(text);
+    card.append(renderAvatar({ name: '作者', avatar: author.avatar }), text);
     if (sns.cta) card.append(el('span', 'author-cta', `${sns.cta} ↗`));
     return card;
   });

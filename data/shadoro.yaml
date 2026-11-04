@@ -1,7 +1,8 @@
 # Shadoro 唯一数据源。手动修改后运行 npm run build 重新生成 docs/leaderboard.json。
 
-# 作者信息，显示在页面最下方。platform 决定图标，目前内置 xiaohongshu。
+# 作者信息，显示在页面最下方。avatar 是相对 docs/ 的路径。
 author:
+  avatar: avatars/author.jpg
   sns:
     - platform: xiaohongshu
       title: 在小红书关注作者
