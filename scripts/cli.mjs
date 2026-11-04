@@ -32,6 +32,8 @@ const USAGE = `用法：
   npm run remove -- <搬运链接>                  撤销一条收录
   npm run avatar -- <个人页链接> <头像图片链接>  设置已收录账号的头像
   npm run sync                                  收录带「${APPROVED_LABEL}」标签的 Issue 并关闭
+  npm run sync -- --issue <编号> --name <昵称> --profile <链接>
+                                                自动提取失败时，手动指定某个 Issue 的发布者
   npm run build                                 由 data/shadoro.yaml 重新生成榜单
 
 add 选项：
@@ -43,6 +45,9 @@ add 选项：
   --id <ID>             手动指定平台用户 ID（有个人页时可省略）
   --alias <ID>          小红书号 / 抖音号等可搜索的公开 ID
   --avatar <链接>       手动指定头像图片（自动提取失败时使用）`;
+
+/** 手动指定发布者的选项，add 和 sync --issue 共用。 */
+const USER_OPTIONS = ['name', 'profile', 'id', 'alias', 'avatar'];
 
 /** 可预期的错误：单条命令以它退出，sync 则跳过当前 Issue 继续处理。 */
 class CliError extends Error {}
@@ -131,8 +136,9 @@ async function addRecord(rawWork, rawOriginal, values, ask) {
   }
   const work = canonicalWork(platform, workUrl);
   if (!work) fail(`无法从链接识别作品：${workUrl}`);
-  const originalKey = detectPlatform(originalUrl) && canonicalWork(detectPlatform(originalUrl), originalUrl)?.key;
-  if (originalUrl === workUrl || originalKey === work.key) fail('搬运链接与原作链接指向同一作品');
+  const originalPlatform = detectPlatform(originalUrl);
+  const originalWork = originalPlatform ? canonicalWork(originalPlatform, originalUrl) : null;
+  if (originalUrl === workUrl || originalWork?.key === work.key) fail('搬运链接与原作链接指向同一作品');
 
   const store = await loadStore(STORE_PATH);
   const { records } = store;
@@ -173,7 +179,10 @@ async function addRecord(rawWork, rawOriginal, values, ask) {
     }
   }
 
-  const avatar = await fetchAvatar(platform, user.id, avatarUrl);
+  // 已收录过的账号沿用原有的公开 ID 和头像；显式传 --avatar 时才重新下载。
+  const known = records.findLast((r) => r.platform === platform && r.user.id === user.id)?.user;
+  user.alias ||= known?.alias ?? '';
+  const avatar = (!values.avatar && known?.avatar) || (await fetchAvatar(platform, user.id, avatarUrl));
   if (avatar) user.avatar = avatar;
   records.push({
     id: workKey,
@@ -181,7 +190,7 @@ async function addRecord(rawWork, rawOriginal, values, ask) {
     type,
     title,
     workUrl: work.url,
-    originalUrl,
+    originalUrl: originalWork?.url ?? originalUrl,
     user,
     note: values.note ?? '',
     source,
@@ -201,10 +210,10 @@ async function add([rawWork, rawOriginal], values) {
 }
 
 /** 收录一个 Issue 并关闭。关闭失败时下次运行会判定为已收录，再次关闭。 */
-async function syncIssue(issue, ask) {
+async function syncIssue(issue, ask, userOptions) {
   const { work, original, profile, type, note } = parseSubmission(issue.body);
   if (!pickUrl(work) || !pickUrl(original)) fail('正文里没有可识别的搬运链接和原作链接');
-  const result = await addRecord(work, original, { type, note, profile: pickUrl(profile) ?? '' }, ask);
+  const result = await addRecord(work, original, { type, note, profile: pickUrl(profile) ?? '', ...userOptions }, ask);
   await closeIssue(
     issue.number,
     result.added
@@ -214,16 +223,20 @@ async function syncIssue(issue, ask) {
   console.log(`✔ 已关闭 #${issue.number}`);
 }
 
-async function sync() {
+async function sync(values) {
+  const userOptions = Object.fromEntries(USER_OPTIONS.filter((key) => values[key]).map((key) => [key, values[key]]));
+  if (Object.keys(userOptions).length && !values.issue) fail('手动指定发布者时需要用 --issue 选定一个 Issue');
   const issues = await listOpenIssues();
-  const approved = issues.filter(isApproved);
+  const labeled = issues.filter(isApproved);
+  const approved = values.issue ? labeled.filter((issue) => String(issue.number) === values.issue) : labeled;
+  if (values.issue && !approved.length) fail(`#${values.issue} 不是带「${APPROVED_LABEL}」标签的未关闭 Issue`);
   const waiting = issues.filter((issue) => !isApproved(issue) && parseSubmission(issue.body).work);
   let skipped = 0;
   await withPrompt(async (ask) => {
     for (const issue of approved) {
       console.log(`\n#${issue.number} ${issue.title}\n  ${issue.url}`);
       try {
-        await syncIssue(issue, ask);
+        await syncIssue(issue, ask, userOptions);
       } catch (error) {
         if (!isExpected(error)) throw error;
         console.error(`✖ 已跳过，Issue 保持打开：${error.message}`);
@@ -233,6 +246,7 @@ async function sync() {
   });
   console.log(`\n完成：处理 ${approved.length - skipped} 个，跳过 ${skipped} 个，${waiting.length} 个等待打「${APPROVED_LABEL}」标签`);
   for (const issue of waiting) console.log(`  #${issue.number} ${issue.title}  ${issue.url}`);
+  if (skipped) console.log('被跳过的 Issue 可在 Claude Code 里运行 /issue-sync，由 AI 打开页面补全发布者信息');
   if (approved.length > skipped) console.log('提交并推送 data/ 与 docs/ 后，榜单页面即更新');
 }
 
@@ -286,6 +300,7 @@ const { positionals, values } = parseArgs({
     id: { type: 'string' },
     alias: { type: 'string' },
     avatar: { type: 'string' },
+    issue: { type: 'string' },
     help: { type: 'boolean', short: 'h' },
   },
 });
@@ -295,7 +310,7 @@ try {
   if (values.help || !command) console.log(USAGE);
   else if (command === 'add') await add(args, values);
   else if (command === 'remove') await remove(args);
-  else if (command === 'sync') await sync();
+  else if (command === 'sync') await sync(values);
   else if (command === 'avatar') await setAvatar(args);
   else if (command === 'build') console.log(`✔ 榜单共 ${(await save(await loadStore(STORE_PATH))).totalUsers} 人`);
   else fail(USAGE);

@@ -45,6 +45,14 @@ test('detectPlatform 不被相似域名欺骗', () => {
   assert.equal(detectPlatform('https://weixin.qq.com/x'), null);
 });
 
+test('canonicalWork 把小红书链接统一成 discovery/item 分享格式', () => {
+  assert.equal(
+    canonicalWork('xiaohongshu', `${XHS_URL}?xsec_token=abc%3D&xsec_source=pc_user`).url,
+    `https://www.xiaohongshu.com/discovery/item/${XHS_ID}?source=webshare&xhsshare=pc_web&xsec_token=abc=&xsec_source=pc_share`,
+  );
+  assert.equal(canonicalWork('xiaohongshu', XHS_URL).url, `https://www.xiaohongshu.com/discovery/item/${XHS_ID}`);
+});
+
 test('canonicalWork 让同一作品的不同链接得到同一 key', () => {
   const plain = canonicalWork('xiaohongshu', XHS_URL);
   const shared = canonicalWork('xiaohongshu', `https://www.xiaohongshu.com/discovery/item/${XHS_ID}?xsec_token=abc&x=1`);

@@ -27,3 +27,18 @@ records:
     note: ""
     source: manual
     addedAt: 2026-11-04
+  - id: xiaohongshu:6ae97f97000000000300a9e5
+    platform: xiaohongshu
+    type: 直接搬运
+    title: ""
+    workUrl: https://www.xiaohongshu.com/discovery/item/6ae97f97000000000300a9e5?source=webshare&xhsshare=pc_web&xsec_token=ABx_qZ7RxMEQuB5hKUVv90A0hjDnzrnTSG55Z_2tYEUrw=&xsec_source=pc_share
+    originalUrl: https://www.xiaohongshu.com/discovery/item/6a870e120000000016026969?source=webshare&xhsshare=pc_web&xsec_token=ABdHWthQrbJQQC2FT9wc5K2M_AhyV8xUgBWTMB2ETIGH0=&xsec_source=pc_share
+    user:
+      id: 5fa6d8440000000001008d5a
+      name: 书生调色库
+      alias: "1089524547"
+      profileUrl: https://www.xiaohongshu.com/user/profile/5fa6d8440000000001008d5a
+      avatar: avatars/54db89d914ff12c7.webp
+    note: ""
+    source: manual
+    addedAt: 2026-11-04

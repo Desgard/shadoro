@@ -56,8 +56,10 @@ export function canonicalWork(platform, rawUrl) {
     const id = url.pathname.match(/\/(?:explore|discovery\/item|note)\/([0-9a-f]{24})/i)?.[1];
     if (!id) return null;
     const token = url.searchParams.get('xsec_token');
-    const query = token ? `?xsec_token=${encodeURIComponent(token)}&xsec_source=pc_share` : '';
-    return { key: `xiaohongshu:${id}`, url: `https://www.xiaohongshu.com/explore/${id}${query}` };
+    const query = token
+      ? `?source=webshare&xhsshare=pc_web&xsec_token=${encodeURIComponent(token).replaceAll('%3D', '=')}&xsec_source=pc_share`
+      : '';
+    return { key: `xiaohongshu:${id}`, url: `https://www.xiaohongshu.com/discovery/item/${id}${query}` };
   }
   if (platform === 'douyin') {
     const modal = url.searchParams.get('modal_id');

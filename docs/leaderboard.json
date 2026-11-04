@@ -11,7 +11,7 @@
       }
     ]
   },
-  "totalWorks": 1,
+  "totalWorks": 2,
   "totalUsers": 1,
   "entries": [
     {
@@ -25,6 +25,14 @@
         {
           "type": "直接搬运",
           "title": "",
+          "url": "https://www.xiaohongshu.com/discovery/item/6ae97f97000000000300a9e5?source=webshare&xhsshare=pc_web&xsec_token=ABx_qZ7RxMEQuB5hKUVv90A0hjDnzrnTSG55Z_2tYEUrw=&xsec_source=pc_share",
+          "originalUrl": "https://www.xiaohongshu.com/discovery/item/6a870e120000000016026969?source=webshare&xhsshare=pc_web&xsec_token=ABdHWthQrbJQQC2FT9wc5K2M_AhyV8xUgBWTMB2ETIGH0=&xsec_source=pc_share",
+          "note": "",
+          "addedAt": "2026-11-04"
+        },
+        {
+          "type": "直接搬运",
+          "title": "",
           "url": "https://www.xiaohongshu.com/discovery/item/6ae89c19000000002c01488f?source=webshare&xhsshare=pc_web&xsec_token=CBCk3IW_lD7lOvBgGz6heymXzaVoeElzkSxcq-uiy5uE8=&xsec_source=pc_share",
           "originalUrl": "https://www.xiaohongshu.com/discovery/item/6ae4c121000000001201c6f0?source=webshare&xhsshare=pc_web&xsec_token=ABjio4fCiyhuwx9t1jOx5SXITs3s4T21ZCq-JwuklgELg=&xsec_source=pc_share",
           "note": "",
@@ -33,7 +41,7 @@
       ],
       "name": "书生调色库",
       "formerNames": [],
-      "count": 1,
+      "count": 2,
       "lastAddedAt": "2026-11-04",
       "rank": 1
     }

@@ -70,6 +70,16 @@ npm run sync
 
 脚本遍历所有未关闭的 Issue，只处理带 `收录` 标签的，写入 `data/shadoro.yaml` 和 `docs/leaderboard.json` 后，留言并关闭 Issue。
 已收录过的作品不重复计数，同样关闭。自动提取失败时会在终端询问发布者信息，直接回车可跳过，Issue 保持打开。
+已收录过的账号沿用原有的公开 ID 和头像，要换头像用 `npm run avatar`。
+
+小红书常常要求登录，脚本遇到这种情况不会绕过，只会跳过。这时在 Claude Code 里运行 `/issue-sync`：
+AI 先跑一遍 sync，再用本地浏览器打开被跳过的页面读取发布者昵称和头像，核对原作作者后完成收录。
+也可以自己查好后手动指定：
+
+```bash
+npm run sync -- --issue 1 --name 昵称 --profile 个人页链接
+```
+
 脚本不会自动提交，运行结束后照常提交并推送 `data/` 和 `docs/`。
 ## 数据
 
