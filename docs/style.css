@@ -219,8 +219,35 @@ h1 {
   text-align: center;
 }
 
-.colophon { padding-block: 40px 56px; color: var(--muted); font-size: 13px; }
+.colophon { padding-block: 40px 28px; color: var(--muted); font-size: 13px; }
 .colophon p { margin: 0 0 6px; }
+
+/* 作者广告位 */
+.author {
+  width: min(860px, 100%);
+  margin-inline: auto;
+  padding: 0 20px 52px;
+}
+.author .edge-print { margin-bottom: 12px; }
+
+.author-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--film);
+  text-decoration: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.author-card:hover { border-color: var(--safelight); box-shadow: 0 0 26px var(--safelight-soft); }
+
+.xhs-icon { flex: none; width: 56px; height: 56px; }
+.author-text { flex: 1; min-width: 0; }
+.author-text strong { display: block; font: 700 18px/1.4 var(--serif); }
+.author-text small { display: block; color: var(--muted); font-size: 13px; }
+.author-cta { flex: none; color: var(--amber); font-size: 14px; font-weight: 600; }
 
 @media (max-width: 560px) {
   :root { --sprocket: 24px; }
@@ -229,6 +256,8 @@ h1 {
   .edge-print span:last-child { display: none; }
   .lead { font-size: 16px; }
   .lead br { display: none; }
+  .author { padding-inline: 14px; }
+  .author-cta { display: none; }
   .strip::before { left: 5px; }
   .strip::after { right: 5px; }
   .strip::before, .strip::after { width: 12px; }
