@@ -22,10 +22,18 @@ export function normalizeType(input) {
 
 export class ExtractError extends Error {}
 
-/** 从 App 分享文案中取出第一个链接，如「复制打开抖音 https://v.douyin.com/xx/ ...」。 */
+/**
+ * 从粘贴内容中取出第一个链接，如「复制打开抖音 https://v.douyin.com/xx/ ...」。
+ * 同时兼容终端转义的反斜杠，以及缺少协议头的三个平台链接。
+ */
 export function pickUrl(text) {
-  const match = String(text ?? '').match(/https?:\/\/[^\s<>"'，。！？、；）】》]+/);
-  return match ? match[0].replace(/[.,;:!?)\]]+$/, '') : null;
+  const input = String(text ?? '').replace(/\\/g, '');
+  const tail = String.raw`[^\s<>"'，。！？、；）】》]+`;
+  const hosts = String.raw`(?:[\w-]+\.)*(?:xiaohongshu\.com|xhslink\.com|douyin\.com|iesdouyin\.com|mp\.weixin\.qq\.com)`;
+  const match = input.match(new RegExp(`https?://${tail}|(?<![\\w.-])${hosts}/${tail}`));
+  if (!match) return null;
+  const url = match[0].replace(/[.,;:!?)\]]+$/, '');
+  return /^https?:/.test(url) ? url : `https://${url}`;
 }
 
 export function detectPlatform(url) {

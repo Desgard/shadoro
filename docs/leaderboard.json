@@ -10,7 +10,30 @@
       }
     ]
   },
-  "totalWorks": 0,
-  "totalUsers": 0,
-  "entries": []
+  "totalWorks": 1,
+  "totalUsers": 1,
+  "entries": [
+    {
+      "key": "xiaohongshu:5fa6d8440000000001008d5a",
+      "platform": "xiaohongshu",
+      "id": "5fa6d8440000000001008d5a",
+      "alias": "1089524547",
+      "profileUrl": "https://www.xiaohongshu.com/user/profile/5fa6d8440000000001008d5a",
+      "works": [
+        {
+          "type": "直接搬运",
+          "title": "",
+          "url": "https://www.xiaohongshu.com/explore/6ae89c19000000002c01488f?xsec_token=CBCk3IW_lD7lOvBgGz6heymXzaVoeElzkSxcq-uiy5uE8%3D&xsec_source=pc_share",
+          "originalUrl": "https://www.xiaohongshu.com/explore/6ae4c121000000001201c6f0?xsec_token=ABjio4fCiyhuwx9t1jOx5SXITs3s4T21ZCq-JwuklgELg=&xsec_source=pc_user",
+          "note": "",
+          "addedAt": "2026-11-04"
+        }
+      ],
+      "name": "书生调色库",
+      "formerNames": [],
+      "count": 1,
+      "lastAddedAt": "2026-11-04",
+      "rank": 1
+    }
+  ]
 }

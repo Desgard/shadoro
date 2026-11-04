@@ -1,0 +1,40 @@
+name: 提交搬运线索
+description: 提交搬运作品和原作的链接，审核通过后收录进榜单
+title: "[线索] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        提交的链接会公开显示在本 Issue 中，请只填写作品的公开链接，不要附上任何人的隐私信息。
+        维护者核实后才会收录。
+  - type: input
+    id: work
+    attributes:
+      label: 搬运作品链接
+      description: 小红书、抖音或微信公众号的作品链接，也可以直接粘贴 App 的分享文案
+      placeholder: https://www.xiaohongshu.com/explore/...
+    validations:
+      required: true
+  - type: input
+    id: original
+    attributes:
+      label: 原作链接
+      description: 原作品的链接，可以是任意平台
+      placeholder: https://
+    validations:
+      required: true
+  - type: dropdown
+    id: type
+    attributes:
+      label: 类型
+      options:
+        - 直接搬运
+        - 改图搬运
+        - AI融图
+    validations:
+      required: true
+  - type: textarea
+    id: note
+    attributes:
+      label: 备注
+      description: 选填。收录后会显示在榜单的对照记录中

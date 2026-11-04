@@ -10,6 +10,7 @@
   "scripts": {
     "add": "node scripts/cli.mjs add",
     "remove": "node scripts/cli.mjs remove",
+    "sync": "node scripts/cli.mjs sync",
     "build": "node scripts/cli.mjs build",
     "dev": "python3 -m http.server 8317 --directory docs",
     "test": "node --test"

@@ -17,6 +17,7 @@ import {
   resolveUrl,
   userIdFromProfile,
 } from './extract.mjs';
+import { APPROVED_LABEL, GhError, closeIssue, isApproved, listOpenIssues, parseSubmission } from './issues.mjs';
 import { buildLeaderboard } from './leaderboard.mjs';
 import { loadStore, saveRecords } from './store.mjs';
 
@@ -27,6 +28,7 @@ const LEADERBOARD_PATH = join(ROOT, 'docs', 'leaderboard.json');
 const USAGE = `用法：
   npm run add -- <搬运链接> <原作链接> [选项]   收录一条（不带链接则逐项询问）
   npm run remove -- <搬运链接>                  撤销一条收录
+  npm run sync                                  收录带「${APPROVED_LABEL}」标签的 Issue 并关闭
   npm run build                                 由 data/shadoro.yaml 重新生成榜单
 
 add 选项：
@@ -38,10 +40,14 @@ add 选项：
   --id <ID>             手动指定平台用户 ID（有个人页时可省略）
   --alias <ID>          小红书号 / 抖音号等可搜索的公开 ID`;
 
+/** 可预期的错误：单条命令以它退出，sync 则跳过当前 Issue 继续处理。 */
+class CliError extends Error {}
+
 const fail = (message) => {
-  console.error(`✖ ${message}`);
-  process.exit(1);
+  throw new CliError(message);
 };
+
+const isExpected = (error) => error instanceof CliError || error instanceof GhError;
 
 async function save({ doc, author, records }) {
   const leaderboard = buildLeaderboard(records);
@@ -82,87 +88,132 @@ async function askType(ask) {
   }
 }
 
-async function add(positionals, values) {
+/** 在终端里提供询问函数，非终端环境传 null。 */
+async function withPrompt(run) {
+  const prompt = process.stdin.isTTY ? createInterface({ input: process.stdin, output: process.stdout }) : null;
+  try {
+    return await run(prompt ? (question) => prompt.question(question) : null);
+  } finally {
+    prompt?.close();
+  }
+}
+
+/** 收录一条作品。返回收录结果，作品已存在时返回 { added: false }。 */
+async function addRecord(rawWork, rawOriginal, values, ask) {
   const presetType = values.type === undefined ? null : normalizeType(values.type);
   if (values.type !== undefined && !presetType) fail(`--type 只能是 ${TYPES.join('、')}，或序号 1-3`);
   if (values.date && !/^\d{4}-\d{2}-\d{2}$/.test(values.date)) fail('--date 格式应为 YYYY-MM-DD');
 
-  const prompt = process.stdin.isTTY ? createInterface({ input: process.stdin, output: process.stdout }) : null;
-  const ask = prompt ? (question) => prompt.question(question) : null;
-  try {
-    const [rawWork, rawOriginal] = positionals;
-    const workInput = pickUrl(rawWork ?? (ask ? await ask('搬运作品链接（可粘贴分享文案）：') : ''));
-    const originalUrl = pickUrl(rawOriginal ?? (ask ? await ask('原始作品链接：') : ''));
-    if (!workInput || !originalUrl) fail(`需要搬运链接和原作链接两个参数\n\n${USAGE}`);
+  const workInput = pickUrl(rawWork ?? (ask ? await ask('搬运作品链接（可粘贴分享文案）：') : ''));
+  const originalUrl = pickUrl(rawOriginal ?? (ask ? await ask('原始作品链接：') : ''));
+  if (!workInput || !originalUrl) fail(`需要搬运链接和原作链接两个参数\n\n${USAGE}`);
 
-    const workUrl = await resolveUrl(workInput);
-    const platform = detectPlatform(workUrl);
-    if (!platform) {
-      const supported = Object.values(PLATFORMS).map((p) => p.label).join('、');
-      fail(`暂不支持该平台的搬运作品：${workUrl}\n目前支持：${supported}`);
-    }
-    const work = canonicalWork(platform, workUrl);
-    if (!work) fail(`无法从链接识别作品：${workUrl}`);
-    const originalKey = detectPlatform(originalUrl) && canonicalWork(detectPlatform(originalUrl), originalUrl)?.key;
-    if (originalUrl === workUrl || originalKey === work.key) fail('搬运链接与原作链接指向同一作品');
+  const workUrl = await resolveUrl(workInput);
+  const platform = detectPlatform(workUrl);
+  if (!platform) {
+    const supported = Object.values(PLATFORMS).map((p) => p.label).join('、');
+    fail(`暂不支持该平台的搬运作品：${workUrl}\n目前支持：${supported}`);
+  }
+  const work = canonicalWork(platform, workUrl);
+  if (!work) fail(`无法从链接识别作品：${workUrl}`);
+  const originalKey = detectPlatform(originalUrl) && canonicalWork(detectPlatform(originalUrl), originalUrl)?.key;
+  if (originalUrl === workUrl || originalKey === work.key) fail('搬运链接与原作链接指向同一作品');
 
-    const store = await loadStore(STORE_PATH);
-    const { records } = store;
-    const existing = records.find((r) => r.id === work.key || r.workUrl === work.url);
-    if (existing) {
-      console.log(`· 该作品已收录（${existing.addedAt}，${existing.user.name}），未重复计数`);
-      return;
-    }
+  const store = await loadStore(STORE_PATH);
+  const { records } = store;
+  const existing = records.find((r) => r.id === work.key || r.workUrl === work.url);
+  if (existing) {
+    console.log(`· 该作品已收录（${existing.addedAt}，${existing.user.name}），未重复计数`);
+    return { added: false };
+  }
 
-    const type = presetType ?? (await askType(ask));
+  const type = presetType ?? (await askType(ask));
 
-    let title = '';
-    let workKey = work.key;
-    let user;
-    let source = 'auto';
-    const hasManual = values.name && (values.profile || values.id);
-    if (hasManual) {
-      user = await manualUser(platform, values, null);
+  let title = '';
+  let workKey = work.key;
+  let user;
+  let source = 'auto';
+  const hasManual = values.name && (values.profile || values.id);
+  if (hasManual) {
+    user = await manualUser(platform, values, null);
+    source = 'manual';
+  } else {
+    try {
+      const extracted = await extractWork(platform, workUrl);
+      ({ title, user } = extracted);
+      workKey = extracted.workKey ?? work.key;
+      if (values.alias) user.alias = values.alias;
+      if (records.some((r) => r.id === workKey)) {
+        console.log('· 该作品已收录（同一作品的另一种链接），未重复计数');
+        return { added: false };
+      }
+    } catch (error) {
+      if (!(error instanceof ExtractError) && error.name !== 'TimeoutError' && error.name !== 'TypeError') throw error;
+      console.warn(`! 自动提取失败：${error.message}，转手动录入`);
+      user = await manualUser(platform, values, ask);
       source = 'manual';
-    } else {
+    }
+  }
+
+  records.push({
+    id: workKey,
+    platform,
+    type,
+    title,
+    workUrl: work.url,
+    originalUrl,
+    user,
+    note: values.note ?? '',
+    source,
+    addedAt: values.date ?? today(),
+  });
+  const leaderboard = await save(store);
+  const entry = leaderboard.entries.find((e) => e.key === `${platform}:${user.id}`);
+  console.log(`✔ 已收录：${user.name}（${PLATFORMS[platform].label}）`);
+  console.log(`  累计 ${entry.count} 次，当前第 ${entry.rank} 名（共 ${leaderboard.totalUsers} 人）`);
+  console.log(`  个人页：${user.profileUrl}`);
+  return { added: true, user, count: entry.count, platform };
+}
+
+async function add([rawWork, rawOriginal], values) {
+  const result = await withPrompt((ask) => addRecord(rawWork, rawOriginal, values, ask));
+  if (result.added) console.log('  提交并推送 data/ 与 docs/ 后，榜单页面即更新');
+}
+
+/** 收录一个 Issue 并关闭。关闭失败时下次运行会判定为已收录，再次关闭。 */
+async function syncIssue(issue, ask) {
+  const { work, original, type, note } = parseSubmission(issue.body);
+  if (!pickUrl(work) || !pickUrl(original)) fail('正文里没有可识别的搬运链接和原作链接');
+  const result = await addRecord(work, original, { type, note }, ask);
+  await closeIssue(
+    issue.number,
+    result.added
+      ? `已收录：${result.user.name}（${PLATFORMS[result.platform].label}），累计 ${result.count} 次。感谢提交。`
+      : '该作品此前已收录，不重复计数。感谢提交。',
+  );
+  console.log(`✔ 已关闭 #${issue.number}`);
+}
+
+async function sync() {
+  const issues = await listOpenIssues();
+  const approved = issues.filter(isApproved);
+  const waiting = issues.filter((issue) => !isApproved(issue) && parseSubmission(issue.body).work);
+  let skipped = 0;
+  await withPrompt(async (ask) => {
+    for (const issue of approved) {
+      console.log(`\n#${issue.number} ${issue.title}\n  ${issue.url}`);
       try {
-        const extracted = await extractWork(platform, workUrl);
-        ({ title, user } = extracted);
-        workKey = extracted.workKey ?? work.key;
-        if (values.alias) user.alias = values.alias;
-        if (records.some((r) => r.id === workKey)) {
-          console.log('· 该作品已收录（同一作品的另一种链接），未重复计数');
-          return;
-        }
+        await syncIssue(issue, ask);
       } catch (error) {
-        if (!(error instanceof ExtractError) && error.name !== 'TimeoutError' && error.name !== 'TypeError') throw error;
-        console.warn(`! 自动提取失败：${error.message}，转手动录入`);
-        user = await manualUser(platform, values, ask);
-        source = 'manual';
+        if (!isExpected(error)) throw error;
+        console.error(`✖ 已跳过，Issue 保持打开：${error.message}`);
+        skipped += 1;
       }
     }
-
-    records.push({
-      id: workKey,
-      platform,
-      type,
-      title,
-      workUrl: work.url,
-      originalUrl,
-      user,
-      note: values.note ?? '',
-      source,
-      addedAt: values.date ?? today(),
-    });
-    const leaderboard = await save(store);
-    const entry = leaderboard.entries.find((e) => e.key === `${platform}:${user.id}`);
-    console.log(`✔ 已收录：${user.name}（${PLATFORMS[platform].label}）`);
-    console.log(`  累计 ${entry.count} 次，当前第 ${entry.rank} 名（共 ${leaderboard.totalUsers} 人）`);
-    console.log(`  个人页：${user.profileUrl}`);
-    console.log('  提交并推送 data/ 与 docs/ 后，榜单页面即更新');
-  } finally {
-    prompt?.close();
-  }
+  });
+  console.log(`\n完成：处理 ${approved.length - skipped} 个，跳过 ${skipped} 个，${waiting.length} 个等待打「${APPROVED_LABEL}」标签`);
+  for (const issue of waiting) console.log(`  #${issue.number} ${issue.title}  ${issue.url}`);
+  if (approved.length > skipped) console.log('提交并推送 data/ 与 docs/ 后，榜单页面即更新');
 }
 
 async function remove(positionals) {
@@ -194,8 +245,15 @@ const { positionals, values } = parseArgs({
 });
 const [command, ...args] = positionals;
 
-if (values.help || !command) console.log(USAGE);
-else if (command === 'add') await add(args, values);
-else if (command === 'remove') await remove(args);
-else if (command === 'build') console.log(`✔ 榜单共 ${(await save(await loadStore(STORE_PATH))).totalUsers} 人`);
-else fail(USAGE);
+try {
+  if (values.help || !command) console.log(USAGE);
+  else if (command === 'add') await add(args, values);
+  else if (command === 'remove') await remove(args);
+  else if (command === 'sync') await sync();
+  else if (command === 'build') console.log(`✔ 榜单共 ${(await save(await loadStore(STORE_PATH))).totalUsers} 人`);
+  else fail(USAGE);
+} catch (error) {
+  if (!isExpected(error)) throw error;
+  console.error(`✖ ${error.message}`);
+  process.exit(1);
+}

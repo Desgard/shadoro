@@ -31,6 +31,10 @@ test('pickUrl 从分享文案中取链接', () => {
   assert.equal(pickUrl('7.43 复制打开抖音，看看 https://v.douyin.com/AbCd/ 【作品】'), 'https://v.douyin.com/AbCd/');
   assert.equal(pickUrl('看这个 https://xhslink.com/a/xyz，太离谱了'), 'https://xhslink.com/a/xyz');
   assert.equal(pickUrl('没有链接'), null);
+  assert.equal(pickUrl('xiaohongshu.com/explore/abc?a=1'), 'https://xiaohongshu.com/explore/abc?a=1');
+  assert.equal(pickUrl('www.douyin.com/video/1'), 'https://www.douyin.com/video/1');
+  assert.equal(pickUrl('https://a.test/x\\?t\\=1\\&b\\=2'), 'https://a.test/x?t=1&b=2');
+  assert.equal(pickUrl('notxiaohongshu.com/explore/abc'), null);
 });
 
 test('detectPlatform 不被相似域名欺骗', () => {

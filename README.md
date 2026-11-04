@@ -34,6 +34,34 @@ git add data docs && git commit -m "收录：<昵称>" && git push
 | `--name <昵称> --profile <个人页>` | 手动指定发布者，跳过自动提取 |
 
 撤销一条收录：`npm run remove -- "<搬运作品链接>"`。
+
+## 通过 Issue 收录
+
+任何人都可以用 Issue 模板「提交搬运线索」提交搬运链接、原作链接和类型。Issue 不会直接进入榜单，要先由维护者核实。
+
+本地需要安装并登录 [GitHub CLI](https://cli.github.com/)，并创建一次 `收录` 标签：
+
+```bash
+brew install gh
+```
+
+```bash
+gh auth login
+```
+
+```bash
+gh label create 收录 --color B60205 --description "已核实，运行 npm run sync 时收录"
+```
+
+核实线索后给 Issue 打上 `收录` 标签，然后运行：
+
+```bash
+npm run sync
+```
+
+脚本遍历所有未关闭的 Issue，只处理带 `收录` 标签的，写入 `data/shadoro.yaml` 和 `docs/leaderboard.json` 后，留言并关闭 Issue。
+已收录过的作品不重复计数，同样关闭。自动提取失败时会在终端询问发布者信息，直接回车可跳过，Issue 保持打开。
+脚本不会自动提交，运行结束后照常提交并推送 `data/` 和 `docs/`。
 ## 数据
 
 所有数据都在 [`data/shadoro.yaml`](data/shadoro.yaml)：`records` 是收录记录，`author` 是页面底部的作者卡片。

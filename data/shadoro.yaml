@@ -10,4 +10,18 @@ author:
       url: https://www.xiaohongshu.com/user/profile/60c6a0cb0000000001009792
 
 # 收录记录，通常由 npm run add 写入。
-records: []
+records:
+  - id: xiaohongshu:6ae89c19000000002c01488f
+    platform: xiaohongshu
+    type: 直接搬运
+    title: ""
+    workUrl: https://www.xiaohongshu.com/explore/6ae89c19000000002c01488f?xsec_token=CBCk3IW_lD7lOvBgGz6heymXzaVoeElzkSxcq-uiy5uE8%3D&xsec_source=pc_share
+    originalUrl: https://www.xiaohongshu.com/explore/6ae4c121000000001201c6f0?xsec_token=ABjio4fCiyhuwx9t1jOx5SXITs3s4T21ZCq-JwuklgELg=&xsec_source=pc_user
+    user:
+      id: 5fa6d8440000000001008d5a
+      name: 书生调色库
+      alias: "1089524547"
+      profileUrl: https://www.xiaohongshu.com/user/profile/5fa6d8440000000001008d5a
+    note: ""
+    source: manual
+    addedAt: 2026-11-04
