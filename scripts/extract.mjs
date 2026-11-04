@@ -112,6 +112,7 @@ export function parseXiaohongshu(html, finalUrl) {
   if (!note?.user?.userId) throw new ExtractError('未找到笔记作者（笔记可能已删除或不可见）');
   return {
     title: note.title || note.desc?.slice(0, 40) || '',
+    avatarUrl: note.user.avatar || '',
     user: {
       id: note.user.userId,
       name: note.user.nickname || note.user.nickName || note.user.userId,
@@ -130,6 +131,7 @@ export function parseDouyin(html) {
   const alias = author.unique_id || (author.short_id && author.short_id !== '0' ? author.short_id : '');
   return {
     title: item.desc ?? '',
+    avatarUrl: author.avatar_thumb?.url_list?.[0] ?? '',
     user: {
       id: author.sec_uid,
       name: author.nickname || alias || author.sec_uid,
@@ -161,6 +163,7 @@ export function parseWechat(html) {
   return {
     workKey: mid && idx ? `wechat:${biz}:${mid}:${idx}` : undefined,
     title: decodeEntities(rawTitle),
+    avatarUrl: html.match(/var round_head_img\s*=\s*"([^"]+)"/)?.[1] ?? '',
     user: {
       id: biz,
       name: decodeEntities(rawName),

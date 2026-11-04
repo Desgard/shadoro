@@ -60,6 +60,22 @@ function matches(entry, query) {
   );
 }
 
+/** 没有头像或图片加载失败时，显示昵称首字。 */
+function renderAvatar(entry) {
+  const box = el('span', 'avatar', Array.from(entry.name)[0] ?? '?');
+  box.setAttribute('aria-hidden', 'true');
+  if (entry.avatar) {
+    const image = el('img');
+    image.alt = '';
+    image.loading = 'lazy';
+    image.decoding = 'async';
+    image.src = entry.avatar;
+    image.addEventListener('error', () => image.remove());
+    box.append(image);
+  }
+  return box;
+}
+
 function renderWork(work) {
   const item = el('li');
   const head = el('div', 'work-head');
@@ -84,8 +100,9 @@ function renderEntry(entry, index) {
     el('small', '', `${PLATFORM_LABELS[entry.platform]} · ${entry.alias || entry.id}`),
   );
   const count = el('span', 'count', entry.count);
+  count.prepend(el('small', '', '做贼'));
   count.append(el('small', '', '次'));
-  summary.append(el('span', 'rank', pad(entry.shownRank)), who, count);
+  summary.append(renderAvatar(entry), el('span', 'rank', pad(entry.shownRank)), who, count);
 
   const evidence = el('div', 'evidence');
   const identity = el('p', 'identity');

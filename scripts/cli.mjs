@@ -4,6 +4,7 @@ import { dirname, join } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
+import { removeAvatar, saveAvatar } from './avatar.mjs';
 import {
   PLATFORMS,
   TYPES,
@@ -23,11 +24,13 @@ import { loadStore, saveRecords } from './store.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const STORE_PATH = join(ROOT, 'data', 'shadoro.yaml');
-const LEADERBOARD_PATH = join(ROOT, 'docs', 'leaderboard.json');
+const DOCS_DIR = join(ROOT, 'docs');
+const LEADERBOARD_PATH = join(DOCS_DIR, 'leaderboard.json');
 
 const USAGE = `用法：
   npm run add -- <搬运链接> <原作链接> [选项]   收录一条（不带链接则逐项询问）
   npm run remove -- <搬运链接>                  撤销一条收录
+  npm run avatar -- <个人页链接> <头像图片链接>  设置已收录账号的头像
   npm run sync                                  收录带「${APPROVED_LABEL}」标签的 Issue 并关闭
   npm run build                                 由 data/shadoro.yaml 重新生成榜单
 
@@ -38,7 +41,8 @@ add 选项：
   --name <昵称>         手动指定发布者昵称（自动提取失败时使用）
   --profile <链接>      手动指定发布者个人页
   --id <ID>             手动指定平台用户 ID（有个人页时可省略）
-  --alias <ID>          小红书号 / 抖音号等可搜索的公开 ID`;
+  --alias <ID>          小红书号 / 抖音号等可搜索的公开 ID
+  --avatar <链接>       手动指定头像图片（自动提取失败时使用）`;
 
 /** 可预期的错误：单条命令以它退出，sync 则跳过当前 Issue 继续处理。 */
 class CliError extends Error {}
@@ -75,6 +79,17 @@ async function manualUser(platform, values, ask) {
   if (!id && ask) id = (await ask('无法从个人页识别用户 ID，请输入：')).trim();
   if (!name || !id) fail('手动录入至少需要昵称，以及个人页链接或用户 ID（--name 与 --profile/--id）');
   return { id, name, alias: alias ?? '', profileUrl: profile || profileUrl(platform, id) };
+}
+
+/** 头像不影响收录，下载失败时只提示。 */
+async function fetchAvatar(platform, userId, url) {
+  if (!url) return '';
+  try {
+    return await saveAvatar(DOCS_DIR, platform, userId, url);
+  } catch (error) {
+    console.warn(`! 头像未保存：${error.message}，可稍后用 npm run avatar 补上`);
+    return '';
+  }
 }
 
 /** 未指定 --type 时在终端询问，直接回车取第一项；非终端环境用默认值。 */
@@ -133,6 +148,7 @@ async function addRecord(rawWork, rawOriginal, values, ask) {
   let workKey = work.key;
   let user;
   let source = 'auto';
+  let avatarUrl = values.avatar ?? '';
   const hasManual = values.name && (values.profile || values.id);
   if (hasManual) {
     user = await manualUser(platform, values, null);
@@ -142,6 +158,7 @@ async function addRecord(rawWork, rawOriginal, values, ask) {
       const extracted = await extractWork(platform, workUrl);
       ({ title, user } = extracted);
       workKey = extracted.workKey ?? work.key;
+      avatarUrl ||= extracted.avatarUrl;
       if (values.alias) user.alias = values.alias;
       if (records.some((r) => r.id === workKey)) {
         console.log('· 该作品已收录（同一作品的另一种链接），未重复计数');
@@ -152,9 +169,12 @@ async function addRecord(rawWork, rawOriginal, values, ask) {
       console.warn(`! 自动提取失败：${error.message}，转手动录入`);
       user = await manualUser(platform, values, ask);
       source = 'manual';
+      if (ask && !avatarUrl) avatarUrl = pickUrl(await ask('头像图片链接（可留空）：')) ?? '';
     }
   }
 
+  const avatar = await fetchAvatar(platform, user.id, avatarUrl);
+  if (avatar) user.avatar = avatar;
   records.push({
     id: workKey,
     platform,
@@ -227,7 +247,32 @@ async function remove(positionals) {
   const kept = records.filter((r) => r.id !== work?.key && r.workUrl !== work?.url);
   if (kept.length === records.length) fail(`未找到该收录：${url}`);
   await save({ ...store, records: kept });
+  const inUse = new Set(kept.map((r) => r.user.avatar));
+  for (const record of records) {
+    if (!inUse.has(record.user.avatar)) await removeAvatar(DOCS_DIR, record.user.avatar);
+  }
   console.log(`✔ 已撤销 ${records.length - kept.length} 条收录`);
+}
+
+async function setAvatar([rawProfile, rawImage]) {
+  const profile = pickUrl(rawProfile);
+  const image = pickUrl(rawImage);
+  if (!profile || !image) fail(USAGE);
+  const url = await resolveUrl(profile);
+  const platform = detectPlatform(url);
+  const id = platform ? userIdFromProfile(platform, url) : null;
+  const store = await loadStore(STORE_PATH);
+  const owned = store.records.filter((r) => r.platform === platform && r.user.id === id);
+  if (!owned.length) fail(`榜单中没有该账号：${url}`);
+  let avatar;
+  try {
+    avatar = await saveAvatar(DOCS_DIR, platform, id, image);
+  } catch (error) {
+    fail(error.message);
+  }
+  for (const record of owned) record.user.avatar = avatar;
+  await save(store);
+  console.log(`✔ 已更新头像：${owned[0].user.name}（${avatar}）`);
 }
 
 const { positionals, values } = parseArgs({
@@ -240,6 +285,7 @@ const { positionals, values } = parseArgs({
     profile: { type: 'string' },
     id: { type: 'string' },
     alias: { type: 'string' },
+    avatar: { type: 'string' },
     help: { type: 'boolean', short: 'h' },
   },
 });
@@ -250,6 +296,7 @@ try {
   else if (command === 'add') await add(args, values);
   else if (command === 'remove') await remove(args);
   else if (command === 'sync') await sync();
+  else if (command === 'avatar') await setAvatar(args);
   else if (command === 'build') console.log(`✔ 榜单共 ${(await save(await loadStore(STORE_PATH))).totalUsers} 人`);
   else fail(USAGE);
 } catch (error) {

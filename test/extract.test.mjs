@@ -68,9 +68,10 @@ test('userIdFromProfile 与自动提取的 ID 对齐', () => {
 const xhsHtml = (state) => `<script>window.__INITIAL_STATE__=${state}</script>`;
 
 test('parseXiaohongshu 取笔记作者，并容忍 undefined', () => {
-  const state = `{"a":undefined,"note":{"currentNoteId":"n1","noteDetailMap":{"n1":{"note":{"title":"标题","user":{"userId":"u1","nickname":"测试作者"}}}}}}`;
-  const { title, user } = parseXiaohongshu(xhsHtml(state), XHS_URL);
+  const state = `{"a":undefined,"note":{"currentNoteId":"n1","noteDetailMap":{"n1":{"note":{"title":"标题","user":{"userId":"u1","nickname":"测试作者","avatar":"https://cdn.test/a"}}}}}}`;
+  const { title, avatarUrl, user } = parseXiaohongshu(xhsHtml(state), XHS_URL);
   assert.equal(title, '标题');
+  assert.equal(avatarUrl, 'https://cdn.test/a');
   assert.deepEqual(user, {
     id: 'u1',
     name: '测试作者',
@@ -88,9 +89,10 @@ test('parseXiaohongshu 对登录页和空笔记抛 ExtractError', () => {
 const dyHtml = (page) => `<script>window._ROUTER_DATA = ${JSON.stringify({ loaderData: { 'video_(id)/page': page } })}</script>`;
 
 test('parseDouyin 取作者，抖音号优先于短 ID', () => {
-  const page = { videoInfoRes: { item_list: [{ desc: '描述', author: { sec_uid: 'MS4w', nickname: '抖音测试', unique_id: 'dy_test', short_id: '0' } }] } };
-  const { title, user } = parseDouyin(dyHtml(page));
+  const page = { videoInfoRes: { item_list: [{ desc: '描述', author: { sec_uid: 'MS4w', nickname: '抖音测试', unique_id: 'dy_test', short_id: '0', avatar_thumb: { url_list: ['https://cdn.test/d'] } } }] } };
+  const { title, avatarUrl, user } = parseDouyin(dyHtml(page));
   assert.equal(title, '描述');
+  assert.equal(avatarUrl, 'https://cdn.test/d');
   assert.deepEqual(user, { id: 'MS4w', name: '抖音测试', alias: 'dy_test', profileUrl: 'https://www.douyin.com/user/MS4w' });
 });
 
@@ -102,10 +104,12 @@ test('parseWechat 取公众号信息并解码实体', () => {
   const html = `<meta property="og:title" content="A &amp; B" />
     <script>var nickname = htmlDecode("测试&amp;公众号");
     var biz = "MzA4==" || "";
+    var round_head_img = "http://wx.qlogo.test/mmhead/0";
     var mid = "26" || "" || "";
     var idx = "1" || "" || "";
     d = { user_name: 'gh_0b9985a3da42', };</script>`;
-  const { workKey, title, user } = parseWechat(html);
+  const { workKey, title, avatarUrl, user } = parseWechat(html);
+  assert.equal(avatarUrl, 'http://wx.qlogo.test/mmhead/0');
   assert.equal(workKey, 'wechat:MzA4==:26:1');
   assert.equal(title, 'A & B');
   assert.equal(user.id, 'MzA4==');

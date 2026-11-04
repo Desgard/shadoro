@@ -10,6 +10,7 @@ export function buildLeaderboard(records) {
       platform: record.platform,
       id: record.user.id,
       alias: '',
+      avatar: '',
       names: [],
       profileUrl: '',
       works: [],
@@ -18,6 +19,7 @@ export function buildLeaderboard(records) {
     if (!entry.names.includes(record.user.name)) entry.names.push(record.user.name);
     entry.name = record.user.name;
     entry.alias = record.user.alias || entry.alias;
+    entry.avatar = record.user.avatar || entry.avatar;
     entry.profileUrl = record.user.profileUrl || entry.profileUrl;
     entry.works.push({
       type: record.type,

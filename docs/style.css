@@ -161,7 +161,7 @@ h1 {
 
 .frame summary {
   display: grid;
-  grid-template-columns: 58px minmax(0, 1fr) auto;
+  grid-template-columns: 44px 58px minmax(0, 1fr) auto;
   align-items: center;
   gap: 14px;
   padding: 16px 14px 16px 12px;
@@ -170,6 +170,20 @@ h1 {
 }
 .frame summary::-webkit-details-marker { display: none; }
 .frame summary:hover, .frame details[open] summary { background: var(--film-raised); }
+
+.avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--line);
+  color: var(--muted);
+  font: 700 18px/1 var(--serif);
+}
+.avatar img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 
 .rank { color: var(--amber); font: 700 22px/1 var(--mono); font-variant-numeric: tabular-nums; }
 .rank::after { content: "A"; margin-left: 1px; font-size: 11px; opacity: .7; }
@@ -193,10 +207,11 @@ h1 {
 
 .count { font: 700 30px/1 var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
 .count small { margin-left: 3px; color: var(--muted); font: 400 12px/1 var(--sans); }
+.count small:first-child { margin: 0 3px 0 0; }
 .frame.top .count { color: var(--safelight); text-shadow: 0 0 18px #e5392f99; }
 
 /* 展开的对照记录 */
-.evidence { padding: 4px 14px 18px 84px; background: var(--film-raised); font-size: 14px; }
+.evidence { padding: 4px 14px 18px 142px; background: var(--film-raised); font-size: 14px; }
 .identity { margin: 0 0 12px; color: var(--muted); overflow-wrap: anywhere; }
 .identity a { color: var(--paper); }
 
@@ -262,7 +277,8 @@ h1 {
   .strip::before { left: 5px; }
   .strip::after { right: 5px; }
   .strip::before, .strip::after { width: 12px; }
-  .frame summary { grid-template-columns: 42px minmax(0, 1fr) auto; gap: 10px; padding-inline: 8px; }
+  .frame summary { grid-template-columns: 36px 36px minmax(0, 1fr) auto; gap: 10px; padding-inline: 8px; }
+  .avatar { width: 36px; height: 36px; font-size: 15px; }
   .rank { font-size: 18px; }
   .count { font-size: 24px; }
   .evidence { padding: 4px 10px 16px; }

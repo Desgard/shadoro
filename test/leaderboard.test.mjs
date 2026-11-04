@@ -52,3 +52,10 @@ test('昵称取最新值，旧昵称进入曾用名，alias 不被空值覆盖',
   assert.equal(entry.alias, 'dy_a');
   assert.equal(entry.works[0].addedAt, '2026-02-01');
 });
+
+test('头像取最新的非空值', () => {
+  const first = record('douyin', 'a', 'A', '2026-01-01');
+  first.user.avatar = 'avatars/a.webp';
+  const [entry] = buildLeaderboard([first, record('douyin', 'a', 'A', '2026-02-01')]).entries;
+  assert.equal(entry.avatar, 'avatars/a.webp');
+});
