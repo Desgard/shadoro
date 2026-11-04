@@ -78,6 +78,53 @@ h1 {
 .tally dt { color: var(--muted); font-size: 13px; }
 .tally dd { margin: 0; font: 700 34px/1.2 var(--mono); font-variant-numeric: tabular-nums; }
 
+.submit-link { margin: 18px 0 0; }
+.submit-link a { color: var(--amber); }
+
+/* 提交线索 */
+.masthead.compact h1 { font-size: clamp(44px, 11vw, 72px); }
+.edge-print a { color: inherit; text-decoration: none; }
+.edge-print a:hover { text-decoration: underline; }
+
+.submission { display: grid; gap: 22px; padding-bottom: 56px; }
+.field { display: grid; gap: 6px; }
+.field label { color: var(--amber); font: 600 13px/1.4 var(--sans); letter-spacing: .12em; }
+.field label em { margin-left: 4px; color: var(--muted); font-style: normal; font-weight: 400; letter-spacing: 0; }
+.field small { color: var(--muted); font-size: 13px; }
+
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 13px 14px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  background: var(--film);
+  color: var(--paper);
+  font: 400 16px/1.4 var(--sans);
+}
+.field textarea { resize: vertical; }
+.field input::placeholder { color: var(--muted); }
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--safelight);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--safelight-soft);
+}
+
+.form-error { margin: 0; color: #ff6a5e; font-weight: 700; }
+.form-error[hidden] { display: none; }
+
+.submission button {
+  justify-self: start;
+  padding: 13px 22px;
+  border: 0;
+  border-radius: 2px;
+  background: var(--safelight);
+  color: var(--paper);
+  font: 700 16px/1.4 var(--sans);
+  cursor: pointer;
+}
+.submission button:hover { filter: brightness(1.12); }
+.form-notice { margin: 0; color: var(--muted); font-size: 13px; }
+
 /* 查询 */
 .inspect label {
   display: block;

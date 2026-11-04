@@ -23,6 +23,14 @@ body:
       placeholder: https://
     validations:
       required: true
+  - type: input
+    id: profile
+    attributes:
+      label: 作者主页链接
+      description: 发布搬运作品的账号主页，自动提取失败时用它确认账号
+      placeholder: https://www.xiaohongshu.com/user/profile/...
+    validations:
+      required: true
   - type: dropdown
     id: type
     attributes:

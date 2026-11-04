@@ -11,12 +11,14 @@ test('parseSubmission 读取表单字段', () => {
   const body = form({
     搬运作品链接: 'https://www.xiaohongshu.com/explore/abc',
     原作链接: 'https://example.test/original',
+    作者主页链接: 'https://www.xiaohongshu.com/user/profile/u1',
     类型: 'AI融图',
     备注: '第一行\n第二行',
   });
   assert.deepEqual(parseSubmission(body), {
     work: 'https://www.xiaohongshu.com/explore/abc',
     original: 'https://example.test/original',
+    profile: 'https://www.xiaohongshu.com/user/profile/u1',
     type: 'AI融图',
     note: '第一行\n第二行',
   });

@@ -202,9 +202,9 @@ async function add([rawWork, rawOriginal], values) {
 
 /** 收录一个 Issue 并关闭。关闭失败时下次运行会判定为已收录，再次关闭。 */
 async function syncIssue(issue, ask) {
-  const { work, original, type, note } = parseSubmission(issue.body);
+  const { work, original, profile, type, note } = parseSubmission(issue.body);
   if (!pickUrl(work) || !pickUrl(original)) fail('正文里没有可识别的搬运链接和原作链接');
-  const result = await addRecord(work, original, { type, note }, ask);
+  const result = await addRecord(work, original, { type, note, profile: pickUrl(profile) ?? '' }, ask);
   await closeIssue(
     issue.number,
     result.added

@@ -44,7 +44,9 @@ npm run avatar -- "<个人页链接>" "<头像图片链接>"
 
 ## 通过 Issue 收录
 
-任何人都可以用 Issue 模板「提交搬运线索」提交搬运链接、原作链接和类型。Issue 不会直接进入榜单，要先由维护者核实。
+任何人都可以在站点的[提交线索页面](https://desgard.github.io/shadoro/submit.html)，或直接用 Issue 模板「提交搬运线索」提交搬运链接、原作链接、作者主页链接和类型。
+页面是静态的，不保存 token：点击提交后带着内容跳转到 GitHub 的 Issue 模板，由提交者登录后确认创建，因此需要 GitHub 账号。
+Issue 不会直接进入榜单，要先由维护者核实。自动提取失败时，脚本优先使用 Issue 里的作者主页链接。
 
 本地需要安装并登录 [GitHub CLI](https://cli.github.com/)，并创建一次 `收录` 标签：
 
