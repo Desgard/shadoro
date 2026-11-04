@@ -12,6 +12,14 @@ export const PLATFORMS = {
   wechat: { label: '微信公众号', hosts: ['mp.weixin.qq.com'] },
 };
 
+export const TYPES = ['直接搬运', '改图搬运', 'AI融图'];
+
+/** 接受类型全名（不区分大小写）或序号 1-3，无法识别时返回 null。 */
+export function normalizeType(input) {
+  const value = String(input ?? '').trim().toLowerCase();
+  return TYPES.find((type, index) => value === type.toLowerCase() || value === String(index + 1)) ?? null;
+}
+
 export class ExtractError extends Error {}
 
 /** 从 App 分享文案中取出第一个链接，如「复制打开抖音 https://v.douyin.com/xx/ ...」。 */

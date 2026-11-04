@@ -5,7 +5,7 @@ import { buildLeaderboard } from '../scripts/leaderboard.mjs';
 const record = (platform, id, name, addedAt, extra = {}) => ({
   id: `${platform}:${addedAt}:${id}`,
   platform,
-  type: '搬运',
+  type: '直接搬运',
   title: '',
   workUrl: `https://example.test/${addedAt}`,
   originalUrl: 'https://example.test/original',

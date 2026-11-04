@@ -2,8 +2,10 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import {
   ExtractError,
+  TYPES,
   canonicalWork,
   detectPlatform,
+  normalizeType,
   parseDouyin,
   parseWechat,
   parseXiaohongshu,
@@ -13,6 +15,17 @@ import {
 
 const XHS_ID = '69fc955e000000003700f8d6';
 const XHS_URL = `https://www.xiaohongshu.com/explore/${XHS_ID}`;
+
+test('normalizeType 接受全名、序号，不区分大小写', () => {
+  assert.deepEqual(TYPES, ['直接搬运', '改图搬运', 'AI融图']);
+  assert.equal(normalizeType('改图搬运'), '改图搬运');
+  assert.equal(normalizeType(' ai融图 '), 'AI融图');
+  assert.equal(normalizeType('1'), '直接搬运');
+  assert.equal(normalizeType('3'), 'AI融图');
+  assert.equal(normalizeType('洗稿'), null);
+  assert.equal(normalizeType('4'), null);
+  assert.equal(normalizeType(''), null);
+});
 
 test('pickUrl 从分享文案中取链接', () => {
   assert.equal(pickUrl('7.43 复制打开抖音，看看 https://v.douyin.com/AbCd/ 【作品】'), 'https://v.douyin.com/AbCd/');

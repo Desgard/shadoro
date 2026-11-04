@@ -6,10 +6,12 @@ import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
 import {
   PLATFORMS,
+  TYPES,
   ExtractError,
   canonicalWork,
   detectPlatform,
   extractWork,
+  normalizeType,
   pickUrl,
   profileUrl,
   resolveUrl,
@@ -20,7 +22,6 @@ import { buildLeaderboard } from './leaderboard.mjs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const RECORDS_PATH = join(ROOT, 'data', 'records.json');
 const LEADERBOARD_PATH = join(ROOT, 'docs', 'leaderboard.json');
-const TYPES = ['搬运', '洗稿'];
 
 const USAGE = `用法：
   npm run add -- <搬运链接> <原作链接> [选项]   收录一条（不带链接则逐项询问）
@@ -28,7 +29,7 @@ const USAGE = `用法：
   npm run build                                 由 data/records.json 重新生成榜单
 
 add 选项：
-  --type <搬运|洗稿>    类型，默认 搬运
+  --type <类型>         直接搬运、改图搬运、AI融图（或序号 1-3），默认 直接搬运
   --note <文字>         备注
   --date <YYYY-MM-DD>   收录日期，默认今天
   --name <昵称>         手动指定发布者昵称（自动提取失败时使用）
@@ -73,8 +74,20 @@ async function manualUser(platform, values, ask) {
   return { id, name, alias: alias ?? '', profileUrl: profile || profileUrl(platform, id) };
 }
 
+/** 未指定 --type 时在终端询问，直接回车取第一项；非终端环境用默认值。 */
+async function askType(ask) {
+  if (!ask) return TYPES[0];
+  const menu = TYPES.map((type, index) => `${index + 1}. ${type}`).join('  ');
+  for (;;) {
+    const answer = (await ask(`类型（${menu}，回车选 1）：`)).trim();
+    const type = answer ? normalizeType(answer) : TYPES[0];
+    if (type) return type;
+  }
+}
+
 async function add(positionals, values) {
-  if (!TYPES.includes(values.type)) fail(`--type 只能是 ${TYPES.join(' 或 ')}`);
+  const presetType = values.type === undefined ? null : normalizeType(values.type);
+  if (values.type !== undefined && !presetType) fail(`--type 只能是 ${TYPES.join('、')}，或序号 1-3`);
   if (values.date && !/^\d{4}-\d{2}-\d{2}$/.test(values.date)) fail('--date 格式应为 YYYY-MM-DD');
 
   const prompt = process.stdin.isTTY ? createInterface({ input: process.stdin, output: process.stdout }) : null;
@@ -102,6 +115,8 @@ async function add(positionals, values) {
       console.log(`· 该作品已收录（${existing.addedAt}，${existing.user.name}），未重复计数`);
       return;
     }
+
+    const type = presetType ?? (await askType(ask));
 
     let title = '';
     let workKey = work.key;
@@ -132,7 +147,7 @@ async function add(positionals, values) {
     records.push({
       id: workKey,
       platform,
-      type: values.type,
+      type,
       title,
       workUrl: work.url,
       originalUrl,
@@ -168,7 +183,7 @@ async function remove(positionals) {
 const { positionals, values } = parseArgs({
   allowPositionals: true,
   options: {
-    type: { type: 'string', default: '搬运' },
+    type: { type: 'string' },
     note: { type: 'string' },
     date: { type: 'string' },
     name: { type: 'string' },
