@@ -16,8 +16,8 @@ records:
     platform: xiaohongshu
     type: 直接搬运
     title: ""
-    workUrl: https://www.xiaohongshu.com/explore/6ae89c19000000002c01488f?xsec_token=CBCk3IW_lD7lOvBgGz6heymXzaVoeElzkSxcq-uiy5uE8%3D&xsec_source=pc_share
-    originalUrl: https://www.xiaohongshu.com/explore/6ae4c121000000001201c6f0?xsec_token=ABjio4fCiyhuwx9t1jOx5SXITs3s4T21ZCq-JwuklgELg=&xsec_source=pc_user
+    workUrl: https://www.xiaohongshu.com/discovery/item/6ae89c19000000002c01488f?source=webshare&xhsshare=pc_web&xsec_token=CBCk3IW_lD7lOvBgGz6heymXzaVoeElzkSxcq-uiy5uE8=&xsec_source=pc_share
+    originalUrl: https://www.xiaohongshu.com/discovery/item/6ae4c121000000001201c6f0?source=webshare&xhsshare=pc_web&xsec_token=ABjio4fCiyhuwx9t1jOx5SXITs3s4T21ZCq-JwuklgELg=&xsec_source=pc_share
     user:
       id: 5fa6d8440000000001008d5a
       name: 书生调色库
