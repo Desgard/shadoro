@@ -18,9 +18,63 @@
       }
     ]
   },
-  "totalWorks": 5,
+  "totalWorks": 6,
   "totalUsers": 2,
   "entries": [
+    {
+      "key": "wechat:Mzc4MDE1NzYyMg==",
+      "platform": "wechat",
+      "id": "Mzc4MDE1NzYyMg==",
+      "alias": "",
+      "avatar": "avatars/5625ffa3d24c34c5.png",
+      "profileUrl": "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=Mzc4MDE1NzYyMg%3D%3D&scene=124#wechat_redirect",
+      "works": [
+        {
+          "type": "直接搬运",
+          "title": "",
+          "url": "https://mp.weixin.qq.com/s/AY67cnq8yqj5hLuEm73iwA",
+          "originalUrl": "https://www.xiaohongshu.com/discovery/item/6ae4c121000000001201c6f0?source=webshare&xhsshare=pc_web&xsec_token=ABjio4fCiyhuwx9t1jOx5SXGZh_lBB64JmfB6ss4RYono=&xsec_source=pc_share",
+          "originalAuthor": {
+            "name": "冬有瓜無",
+            "profileUrl": "https://www.xiaohongshu.com/user/profile/60c6a0cb0000000001009792",
+            "avatar": "avatars/67faf9121b45652d.jpg"
+          },
+          "note": "",
+          "addedAt": "2026-11-05"
+        },
+        {
+          "type": "直接搬运",
+          "title": "",
+          "url": "https://mp.weixin.qq.com/s/YC89MHZSP9RXwUbIN79iig",
+          "originalUrl": "https://www.xiaohongshu.com/discovery/item/6addf060000000002b00f1e4?source=webshare&xhsshare=pc_web&xsec_token=ABQVwI90FIj4KMeisEMIIAibSUbEkR_Spg6EJMZAbG-UE=&xsec_source=pc_share",
+          "originalAuthor": {
+            "name": "星月CHRICY（12-2月北海道青森）",
+            "profileUrl": "https://www.xiaohongshu.com/user/profile/5a71ff794eacab17dcce5384",
+            "avatar": "avatars/69a17edaa79b48eb.jpg"
+          },
+          "note": "",
+          "addedAt": "2026-11-05"
+        },
+        {
+          "type": "直接搬运",
+          "title": "",
+          "url": "https://mp.weixin.qq.com/s/Xvd-mD-cQ3v6yEqeep89Vw",
+          "originalUrl": "https://www.xiaohongshu.com/discovery/item/6aeb1ffb000000000300ba5d?source=webshare&xhsshare=pc_web&xsec_token=ABq-wCOxIw9DdKbMlOl4KSdDl1rrd7da2lXB5kO2XnMuM=&xsec_source=pc_share",
+          "originalAuthor": {
+            "name": "一一禾",
+            "profileUrl": "https://www.xiaohongshu.com/user/profile/618f506d000000001000aec2",
+            "avatar": "avatars/821542875c036b6b.jpg"
+          },
+          "note": "",
+          "addedAt": "2026-11-05"
+        }
+      ],
+      "name": "10.5s",
+      "formerNames": [],
+      "count": 3,
+      "lastAddedAt": "2026-11-05",
+      "rank": 1
+    },
     {
       "key": "xiaohongshu:5fa6d8440000000001008d5a",
       "platform": "xiaohongshu",
@@ -74,47 +128,6 @@
       "count": 3,
       "lastAddedAt": "2026-11-05",
       "rank": 1
-    },
-    {
-      "key": "wechat:Mzc4MDE1NzYyMg==",
-      "platform": "wechat",
-      "id": "Mzc4MDE1NzYyMg==",
-      "alias": "",
-      "avatar": "avatars/5625ffa3d24c34c5.png",
-      "profileUrl": "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=Mzc4MDE1NzYyMg%3D%3D&scene=124#wechat_redirect",
-      "works": [
-        {
-          "type": "直接搬运",
-          "title": "",
-          "url": "https://mp.weixin.qq.com/s/YC89MHZSP9RXwUbIN79iig",
-          "originalUrl": "https://www.xiaohongshu.com/discovery/item/6addf060000000002b00f1e4?source=webshare&xhsshare=pc_web&xsec_token=ABQVwI90FIj4KMeisEMIIAibSUbEkR_Spg6EJMZAbG-UE=&xsec_source=pc_share",
-          "originalAuthor": {
-            "name": "星月CHRICY（12-2月北海道青森）",
-            "profileUrl": "https://www.xiaohongshu.com/user/profile/5a71ff794eacab17dcce5384",
-            "avatar": "avatars/69a17edaa79b48eb.jpg"
-          },
-          "note": "",
-          "addedAt": "2026-11-05"
-        },
-        {
-          "type": "直接搬运",
-          "title": "",
-          "url": "https://mp.weixin.qq.com/s/Xvd-mD-cQ3v6yEqeep89Vw",
-          "originalUrl": "https://www.xiaohongshu.com/discovery/item/6aeb1ffb000000000300ba5d?source=webshare&xhsshare=pc_web&xsec_token=ABq-wCOxIw9DdKbMlOl4KSdDl1rrd7da2lXB5kO2XnMuM=&xsec_source=pc_share",
-          "originalAuthor": {
-            "name": "一一禾",
-            "profileUrl": "https://www.xiaohongshu.com/user/profile/618f506d000000001000aec2",
-            "avatar": "avatars/821542875c036b6b.jpg"
-          },
-          "note": "",
-          "addedAt": "2026-11-05"
-        }
-      ],
-      "name": "10.5s",
-      "formerNames": [],
-      "count": 2,
-      "lastAddedAt": "2026-11-05",
-      "rank": 2
     }
   ]
 }
