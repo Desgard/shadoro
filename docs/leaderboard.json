@@ -18,8 +18,8 @@
       }
     ]
   },
-  "totalWorks": 3,
-  "totalUsers": 1,
+  "totalWorks": 4,
+  "totalUsers": 2,
   "entries": [
     {
       "key": "xiaohongshu:5fa6d8440000000001008d5a",
@@ -74,6 +74,34 @@
       "count": 3,
       "lastAddedAt": "2026-11-05",
       "rank": 1
+    },
+    {
+      "key": "wechat:Mzc4MDE1NzYyMg==",
+      "platform": "wechat",
+      "id": "Mzc4MDE1NzYyMg==",
+      "alias": "",
+      "avatar": "avatars/5625ffa3d24c34c5.png",
+      "profileUrl": "https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=Mzc4MDE1NzYyMg%3D%3D&scene=124#wechat_redirect",
+      "works": [
+        {
+          "type": "直接搬运",
+          "title": "",
+          "url": "https://mp.weixin.qq.com/s/Xvd-mD-cQ3v6yEqeep89Vw",
+          "originalUrl": "https://www.xiaohongshu.com/discovery/item/6aeb1ffb000000000300ba5d?source=webshare&xhsshare=pc_web&xsec_token=ABq-wCOxIw9DdKbMlOl4KSdDl1rrd7da2lXB5kO2XnMuM=&xsec_source=pc_share",
+          "originalAuthor": {
+            "name": "一一禾",
+            "profileUrl": "https://www.xiaohongshu.com/user/profile/618f506d000000001000aec2",
+            "avatar": "avatars/821542875c036b6b.jpg"
+          },
+          "note": "",
+          "addedAt": "2026-11-05"
+        }
+      ],
+      "name": "10.5s",
+      "formerNames": [],
+      "count": 1,
+      "lastAddedAt": "2026-11-05",
+      "rank": 2
     }
   ]
 }

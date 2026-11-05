@@ -74,3 +74,22 @@ records:
     note: ""
     source: manual
     addedAt: 2026-11-05
+  - id: wechat:Xvd-mD-cQ3v6yEqeep89Vw
+    platform: wechat
+    type: 直接搬运
+    title: ""
+    workUrl: https://mp.weixin.qq.com/s/Xvd-mD-cQ3v6yEqeep89Vw
+    originalUrl: https://www.xiaohongshu.com/discovery/item/6aeb1ffb000000000300ba5d?source=webshare&xhsshare=pc_web&xsec_token=ABq-wCOxIw9DdKbMlOl4KSdDl1rrd7da2lXB5kO2XnMuM=&xsec_source=pc_share
+    originalAuthor:
+      name: 一一禾
+      profileUrl: https://www.xiaohongshu.com/user/profile/618f506d000000001000aec2
+      avatar: avatars/821542875c036b6b.jpg
+    user:
+      id: Mzc4MDE1NzYyMg==
+      name: 10.5s
+      alias: ""
+      profileUrl: https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=Mzc4MDE1NzYyMg%3D%3D&scene=124#wechat_redirect
+      avatar: avatars/5625ffa3d24c34c5.png
+    note: ""
+    source: manual
+    addedAt: 2026-11-05
