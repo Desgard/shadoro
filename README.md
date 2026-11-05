@@ -53,6 +53,21 @@ npm run original -- "<搬运作品链接>" --original-name 昵称 --original-pro
 
 不带原作者选项时，脚本重新尝试从原作页面提取。
 
+## 用 AI 客户端收录
+
+项目带有通用的 Skill [`record-repost`](.agents/skills/record-repost/SKILL.md)。把搬运作品链接和原作链接发给 AI，它会控制浏览器读取两位作者的昵称、个人页和头像，再运行 `npm run add` 写入 `data/shadoro.yaml`。
+类型默认是直接搬运，只有明确说明时才会改成其他类型。
+
+| 客户端 | 接入方式 |
+| --- | --- |
+| Claude Code | 打开项目即可用，`.claude/skills/` 下是软链接 |
+| Codex | 打开项目即可用，读取 `.agents/skills/` |
+| WorkBuddy | 打开项目即可用，`.workbuddy/skills/` 下是软链接 |
+| 只读 `AGENTS.md` 的客户端 | 由 [`AGENTS.md`](AGENTS.md) 指向 Skill |
+| ChatGPT 网页版等不能访问本地文件的客户端 | 把 `SKILL.md` 的内容发给它，再把生成的命令拿到本地运行 |
+
+Skill 只修改 `.agents/skills/record-repost/SKILL.md` 这一份。需要浏览器和命令行工具才能走完全程，缺浏览器时由脚本尝试提取，缺命令行时由 AI 给出命令。
+
 ## 通过 Issue 收录
 
 任何人都可以在站点的[提交线索页面](https://desgard.github.io/shadoro/submit.html)，或直接用 Issue 模板「提交搬运线索」提交搬运链接、搬运者主页、原作链接、原作者主页和类型。

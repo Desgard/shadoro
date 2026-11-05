@@ -11,7 +11,7 @@
       }
     ]
   },
-  "totalWorks": 2,
+  "totalWorks": 3,
   "totalUsers": 1,
   "entries": [
     {
@@ -22,6 +22,19 @@
       "avatar": "avatars/54db89d914ff12c7.webp",
       "profileUrl": "https://www.xiaohongshu.com/user/profile/5fa6d8440000000001008d5a",
       "works": [
+        {
+          "type": "直接搬运",
+          "title": "",
+          "url": "https://www.xiaohongshu.com/discovery/item/6ae8b6890000000035011c93?source=webshare&xhsshare=pc_web&xsec_token=ABinC8gFbMHKyjcdpmp66LvDJwwBRG1gO741hiwmJ42gE=&xsec_source=pc_share",
+          "originalUrl": "https://www.instagram.com/p/Dc_HytoE3Sg/?utm_source=ig_web_copy_link&dlrf=NTc4MTIwNjQ2YQ==",
+          "originalAuthor": {
+            "name": "エン（多多）",
+            "profileUrl": "https://www.instagram.com/zzzzby0820/",
+            "avatar": "avatars/a72d0caf09e7e9cd.jpg"
+          },
+          "note": "",
+          "addedAt": "2026-11-05"
+        },
         {
           "type": "直接搬运",
           "title": "",
@@ -51,8 +64,8 @@
       ],
       "name": "书生调色库",
       "formerNames": [],
-      "count": 2,
-      "lastAddedAt": "2026-11-04",
+      "count": 3,
+      "lastAddedAt": "2026-11-05",
       "rank": 1
     }
   ]

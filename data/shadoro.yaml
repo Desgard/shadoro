@@ -50,3 +50,22 @@ records:
       name: 📷HiNi
       profileUrl: https://www.xiaohongshu.com/user/profile/642c1fb00000000012012fb7
       avatar: avatars/111f8f33efba107c.jpg
+  - id: xiaohongshu:6ae8b6890000000035011c93
+    platform: xiaohongshu
+    type: 直接搬运
+    title: ""
+    workUrl: https://www.xiaohongshu.com/discovery/item/6ae8b6890000000035011c93?source=webshare&xhsshare=pc_web&xsec_token=ABinC8gFbMHKyjcdpmp66LvDJwwBRG1gO741hiwmJ42gE=&xsec_source=pc_share
+    originalUrl: https://www.instagram.com/p/Dc_HytoE3Sg/?utm_source=ig_web_copy_link&dlrf=NTc4MTIwNjQ2YQ==
+    originalAuthor:
+      name: エン（多多）
+      profileUrl: https://www.instagram.com/zzzzby0820/
+      avatar: avatars/a72d0caf09e7e9cd.jpg
+    user:
+      id: 5fa6d8440000000001008d5a
+      name: 书生调色库
+      alias: "1089524547"
+      profileUrl: https://www.xiaohongshu.com/user/profile/5fa6d8440000000001008d5a
+      avatar: avatars/54db89d914ff12c7.webp
+    note: ""
+    source: manual
+    addedAt: 2026-11-05
