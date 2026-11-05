@@ -131,3 +131,22 @@ records:
     note: ""
     source: manual
     addedAt: 2026-11-05
+  - id: wechat:Vz59Kz6gOshPV3MVMwX3OQ
+    platform: wechat
+    type: 直接搬运
+    title: ""
+    workUrl: https://mp.weixin.qq.com/s/Vz59Kz6gOshPV3MVMwX3OQ
+    originalUrl: https://www.xiaohongshu.com/discovery/item/691855a2000000001b03004b?source=webshare&xhsshare=pc_web&xsec_token=ABIgbtV4ZU0XySRlsB1YTiRD0hJfEWtawAt7yTuSQaH0w=&xsec_source=pc_share
+    originalAuthor:
+      name: 晨星星Photo
+      profileUrl: https://www.xiaohongshu.com/user/profile/5b163196e8ac2b6eb7d8e523
+      avatar: avatars/1beff0d6d9e385c4.jpg
+    user:
+      id: Mzc4MDE1NzYyMg==
+      name: 10.5s
+      alias: ""
+      profileUrl: https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=Mzc4MDE1NzYyMg%3D%3D&scene=124#wechat_redirect
+      avatar: avatars/5625ffa3d24c34c5.png
+    note: ""
+    source: manual
+    addedAt: 2026-11-05
