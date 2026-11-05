@@ -19,10 +19,10 @@ function el(tag, className, text) {
   return node;
 }
 
-/** 收录内容来自外部页面，只放行 http(s) 链接。 */
-function link(href, text) {
+/** 收录内容来自外部页面，默认只放行 http(s) 链接。 */
+function link(href, text, protocols = ['http:', 'https:']) {
   try {
-    if (!['http:', 'https:'].includes(new URL(href).protocol)) return el('span', '', text);
+    if (!protocols.includes(new URL(href).protocol)) return el('span', '', text);
   } catch {
     return el('span', '', text);
   }
@@ -180,8 +180,10 @@ function render() {
 
 function renderAuthor(author) {
   const cards = (author?.sns ?? []).map((sns) => {
-    const card = link(sns.url, '');
+    // 作者信息由维护者填写，额外允许邮箱链接。
+    const card = link(sns.url, '', ['http:', 'https:', 'mailto:']);
     if (card.tagName !== 'A') return null;
+    if (card.protocol === 'mailto:') card.removeAttribute('target');
     card.className = 'author-card';
     card.rel = 'noopener noreferrer';
     const text = el('span', 'author-text');

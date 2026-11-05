@@ -1,4 +1,4 @@
-import { FIELD_IDS, MAX_URL_LENGTH, buildIssueUrl, validate } from './issue-url.js';
+import { FIELD_IDS, MAX_URL_LENGTH, buildIssueUrl, validate } from './issue-url.js?v=77d39bbe';
 
 const form = document.getElementById('submission');
 const error = document.getElementById('form-error');

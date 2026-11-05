@@ -9,6 +9,11 @@ author:
       description: 觉得这张榜单有用？来小红书关注我。
       cta: 去关注
       url: https://www.xiaohongshu.com/user/profile/60c6a0cb0000000001009792
+    - platform: email
+      title: 使用邮箱联系作者
+      description: desgard.duan.jp@gmail.com
+      cta: 发邮件
+      url: mailto:desgard.duan.jp@gmail.com
 
 # 收录记录，通常由 npm run add 写入。originalAuthor 是被搬运的原作者。
 records:

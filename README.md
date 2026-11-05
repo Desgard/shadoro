@@ -113,7 +113,10 @@ npm run sync -- --issue 1 --name 昵称 --profile 个人页链接 --original-nam
 GitHub Pages 只发布 `docs/`，页面读取的是由 YAML 生成的 `docs/leaderboard.json`，这个文件不要手改。
 手动改过 YAML 后运行 `npm run build`，再提交 `data/` 和 `docs/`。
 
-在 `author.sns` 下增加条目就能增加作者链接，每一条共用 `author.avatar` 头像。
+页面引用的 JS、CSS 带内容哈希（`app.js?v=...`），避免发布后读到旧缓存。改过 `docs/` 下的 JS 或 CSS 后也要运行 `npm run build`，
+否则 `npm test` 会失败。不要手改版本号。
+
+在 `author.sns` 下增加条目就能增加作者链接，`url` 可以是 http(s) 或 `mailto:` 邮箱，每一条共用 `author.avatar` 头像。
 
 ### 各平台提取情况
 

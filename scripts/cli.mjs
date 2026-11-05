@@ -4,6 +4,7 @@ import { dirname, join } from 'node:path';
 import { createInterface } from 'node:readline/promises';
 import { fileURLToPath } from 'node:url';
 import { parseArgs } from 'node:util';
+import { stampAssets } from './assets.mjs';
 import { removeAvatar, saveAvatar } from './avatar.mjs';
 import {
   PLATFORMS,
@@ -72,6 +73,7 @@ async function save({ doc, author, records }) {
   const leaderboard = buildLeaderboard(records);
   await saveRecords(STORE_PATH, doc, records);
   await writeFile(LEADERBOARD_PATH, `${JSON.stringify({ author, ...leaderboard }, null, 2)}\n`);
+  await stampAssets(DOCS_DIR);
   return leaderboard;
 }
 
