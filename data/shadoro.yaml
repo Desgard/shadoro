@@ -93,3 +93,22 @@ records:
     note: ""
     source: manual
     addedAt: 2026-11-05
+  - id: wechat:YC89MHZSP9RXwUbIN79iig
+    platform: wechat
+    type: 直接搬运
+    title: ""
+    workUrl: https://mp.weixin.qq.com/s/YC89MHZSP9RXwUbIN79iig
+    originalUrl: https://www.xiaohongshu.com/discovery/item/6addf060000000002b00f1e4?source=webshare&xhsshare=pc_web&xsec_token=ABQVwI90FIj4KMeisEMIIAibSUbEkR_Spg6EJMZAbG-UE=&xsec_source=pc_share
+    originalAuthor:
+      name: 星月CHRICY（12-2月北海道青森）
+      profileUrl: https://www.xiaohongshu.com/user/profile/5a71ff794eacab17dcce5384
+      avatar: avatars/69a17edaa79b48eb.jpg
+    user:
+      id: Mzc4MDE1NzYyMg==
+      name: 10.5s
+      alias: ""
+      profileUrl: https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=Mzc4MDE1NzYyMg%3D%3D&scene=124#wechat_redirect
+      avatar: avatars/5625ffa3d24c34c5.png
+    note: ""
+    source: manual
+    addedAt: 2026-11-05
