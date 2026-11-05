@@ -112,3 +112,22 @@ records:
     note: ""
     source: manual
     addedAt: 2026-11-05
+  - id: wechat:AY67cnq8yqj5hLuEm73iwA
+    platform: wechat
+    type: 直接搬运
+    title: ""
+    workUrl: https://mp.weixin.qq.com/s/AY67cnq8yqj5hLuEm73iwA
+    originalUrl: https://www.xiaohongshu.com/discovery/item/6ae4c121000000001201c6f0?source=webshare&xhsshare=pc_web&xsec_token=ABjio4fCiyhuwx9t1jOx5SXGZh_lBB64JmfB6ss4RYono=&xsec_source=pc_share
+    originalAuthor:
+      name: 冬有瓜無
+      profileUrl: https://www.xiaohongshu.com/user/profile/60c6a0cb0000000001009792
+      avatar: avatars/67faf9121b45652d.jpg
+    user:
+      id: Mzc4MDE1NzYyMg==
+      name: 10.5s
+      alias: ""
+      profileUrl: https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=Mzc4MDE1NzYyMg%3D%3D&scene=124#wechat_redirect
+      avatar: avatars/5625ffa3d24c34c5.png
+    note: ""
+    source: manual
+    addedAt: 2026-11-05
