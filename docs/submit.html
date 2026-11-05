@@ -23,14 +23,19 @@
         <small>小红书、抖音或微信公众号的作品链接，也可以直接粘贴 App 的分享文案</small>
       </div>
       <div class="field">
+        <label for="profile">搬运者主页链接 <em>必填</em></label>
+        <input id="profile" name="profile" type="text" required autocomplete="off" spellcheck="false" placeholder="https://www.xiaohongshu.com/user/profile/...">
+        <small>发布搬运作品的账号主页，自动提取失败时用它确认账号</small>
+      </div>
+      <div class="field">
         <label for="original">原作链接 <em>必填</em></label>
         <input id="original" name="original" type="text" required autocomplete="off" spellcheck="false" placeholder="https://">
         <small>原作品的链接，可以是任意平台</small>
       </div>
       <div class="field">
-        <label for="profile">作者主页链接 <em>必填</em></label>
-        <input id="profile" name="profile" type="text" required autocomplete="off" spellcheck="false" placeholder="https://www.xiaohongshu.com/user/profile/...">
-        <small>发布搬运作品的账号主页，自动提取失败时用它确认账号</small>
+        <label for="originalProfile">原作者主页链接 <em>必填</em></label>
+        <input id="originalProfile" name="originalProfile" type="text" required autocomplete="off" spellcheck="false" placeholder="https://">
+        <small>被搬运的作者的主页，可以是任意平台，收录后用来标记原作者</small>
       </div>
       <div class="field">
         <label for="type">类型 <em>必填</em></label>

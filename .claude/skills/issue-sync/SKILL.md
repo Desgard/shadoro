@@ -1,6 +1,6 @@
 ---
 name: issue-sync
-description: 收录带「收录」标签的 GitHub Issue。先跑 npm run sync，自动提取失败的 Issue 由 AI 用本地浏览器打开页面，读取发布者昵称和头像后补全。用户说“同步 Issue”“收录线索”时使用。
+description: 收录带「收录」标签的 GitHub Issue。先跑 npm run sync，自动提取失败的 Issue 由 AI 用本地浏览器打开页面，读取搬运者和原作者的昵称、头像后补全。用户说“同步 Issue”“收录线索”时使用。
 ---
 
 # 收录 Issue
@@ -23,11 +23,11 @@ npm run sync </dev/null
 gh issue view <编号> --json number,title,body,labels,url
 ```
 
-确认带 `收录` 标签，取出搬运作品链接和原作链接。
+确认带 `收录` 标签，取出搬运作品、搬运者主页、原作和原作者主页的链接。
 
 ## 3. 用浏览器打开页面
 
-用内置浏览器（`mcp__Claude_Browser__*`）依次打开搬运作品和原作。
+用内置浏览器（`mcp__Claude_Browser__*`）依次打开搬运作品和原作，分别读取搬运者和原作者的信息。原作页面读不到作者时，打开 Issue 里的原作者主页。
 
 小红书的数据在页面的 `window.__INITIAL_STATE__` 里：
 
@@ -48,11 +48,14 @@ const note = Object.values(window.__INITIAL_STATE__?.note?.noteDetailMap ?? {})[
 搬运方和原作者是同一账号时不要收录，把情况告诉用户。作者不同才继续：
 
 ```bash
-npm run sync -- --issue <编号> --name <昵称> --profile <个人页> --avatar <头像地址> </dev/null
+npm run sync -- --issue <编号> --name <昵称> --profile <个人页> --avatar <头像地址> \
+  --original-name <原作者昵称> --original-profile <原作者个人页> --original-avatar <原作者头像地址> </dev/null
 ```
 
+只有原作者取不到时，也可以只传 `--original-*`，搬运者仍由脚本提取。
+
 账号已在 `data/shadoro.yaml` 里时省略 `--avatar`，脚本会沿用原有的公开 ID 和头像。
-新账号的头像如果下载失败，收录仍会完成，告诉用户可以稍后用 `npm run avatar` 补上。
+新账号的头像如果下载失败，收录仍会完成，告诉用户可以稍后用 `npm run avatar` 补上。原作者的头像下载失败时用 `npm run original` 补上。
 
 ## 5. 汇报
 

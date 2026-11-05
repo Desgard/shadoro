@@ -31,6 +31,7 @@ const USAGE = `用法：
   npm run add -- <搬运链接> <原作链接> [选项]   收录一条（不带链接则逐项询问）
   npm run remove -- <搬运链接>                  撤销一条收录
   npm run avatar -- <个人页链接> <头像图片链接>  设置已收录账号的头像
+  npm run original -- <搬运链接> [原作者选项]   补全或修改一条收录的原作者（不带选项时从原作页面提取）
   npm run sync                                  收录带「${APPROVED_LABEL}」标签的 Issue 并关闭，作品已收录的 Issue 也一并关闭
   npm run sync -- --issue <编号> --name <昵称> --profile <链接>
                                                 自动提取失败时，手动指定某个 Issue 的发布者
@@ -44,10 +45,15 @@ add 选项：
   --profile <链接>      手动指定发布者个人页
   --id <ID>             手动指定平台用户 ID（有个人页时可省略）
   --alias <ID>          小红书号 / 抖音号等可搜索的公开 ID
-  --avatar <链接>       手动指定头像图片（自动提取失败时使用）`;
+  --avatar <链接>       手动指定头像图片（自动提取失败时使用）
+
+原作者选项（add、sync --issue、original 通用）：
+  --original-name <昵称>     原作者昵称，指定后不再从原作页面提取
+  --original-profile <链接>  原作者个人页
+  --original-avatar <链接>   原作者头像图片`;
 
 /** 手动指定发布者的选项，add 和 sync --issue 共用。 */
-const USER_OPTIONS = ['name', 'profile', 'id', 'alias', 'avatar'];
+const USER_OPTIONS = ['name', 'profile', 'id', 'alias', 'avatar', 'original-name', 'original-profile', 'original-avatar'];
 
 /** 可预期的错误：单条命令以它退出，sync 则跳过当前 Issue 继续处理。 */
 class CliError extends Error {}
@@ -57,6 +63,10 @@ const fail = (message) => {
 };
 
 const isExpected = (error) => error instanceof CliError || error instanceof GhError;
+
+/** 页面打不开或没有作者数据，这类失败转手动录入。 */
+const isExtractFailure = (error) =>
+  error instanceof ExtractError || error.name === 'TimeoutError' || error.name === 'TypeError';
 
 async function save({ doc, author, records }) {
   const leaderboard = buildLeaderboard(records);
@@ -87,14 +97,65 @@ async function manualUser(platform, values, ask) {
 }
 
 /** 头像不影响收录，下载失败时只提示。 */
-async function fetchAvatar(platform, userId, url) {
+async function fetchAvatar(platform, userId, url, retry = 'npm run avatar') {
   if (!url) return '';
   try {
     return await saveAvatar(DOCS_DIR, platform, userId, url);
   } catch (error) {
-    console.warn(`! 头像未保存：${error.message}，可稍后用 npm run avatar 补上`);
+    console.warn(`! 头像未保存：${error.message}，可稍后用 ${retry} 补上`);
     return '';
   }
+}
+
+/**
+ * 取原作者：手动指定优先，其次提取原作页面，再在终端询问。都没有时返回 null。
+ * 原作可以在任意平台，不支持的平台没有用户 ID，头像文件名改用个人页或昵称区分。
+ */
+async function findOriginalAuthor(originalUrl, values, records, ask) {
+  let name = values['original-name'] ?? '';
+  let profile = pickUrl(values['original-profile']) ?? '';
+  let avatarUrl = values['original-avatar'] ?? '';
+  const originalPlatform = detectPlatform(originalUrl);
+  if (!name && originalPlatform) {
+    try {
+      const extracted = await extractWork(originalPlatform, originalUrl);
+      ({ name, profileUrl: profile } = extracted.user);
+      avatarUrl ||= extracted.avatarUrl;
+    } catch (error) {
+      if (!isExtractFailure(error)) throw error;
+      console.warn(`! 原作者提取失败：${error.message}`);
+    }
+  }
+  if (ask) {
+    name ||= (await ask('原作者昵称（可留空）：')).trim();
+    if (name) {
+      profile ||= pickUrl(await ask('原作者个人页链接（可留空）：')) ?? '';
+      avatarUrl ||= pickUrl(await ask('原作者头像图片链接（可留空）：')) ?? '';
+    }
+  }
+  if (!name) return null;
+  if (profile) profile = await resolveUrl(profile);
+
+  const known = records.findLast((r) => profile && r.originalAuthor?.profileUrl === profile)?.originalAuthor;
+  const platform = detectPlatform(profile);
+  const id = (platform && userIdFromProfile(platform, profile)) || profile || name;
+  const avatar =
+    (!values['original-avatar'] && known?.avatar) ||
+    (await fetchAvatar(platform ?? 'other', id, avatarUrl, 'npm run original'));
+  return { name, profileUrl: profile, ...(avatar && { avatar }) };
+}
+
+/** 搬运者和原作者是同一账号时不算搬运。 */
+function assertDifferentAccount(platform, user, author) {
+  if (detectPlatform(author?.profileUrl) !== platform) return;
+  if (userIdFromProfile(platform, author.profileUrl) === user.id) fail(`搬运者和原作者是同一账号：${user.name}`);
+}
+
+/** 由粘贴的链接定位作品，remove 和 original 共用。 */
+async function locateWork(input) {
+  const url = await resolveUrl(input);
+  const platform = detectPlatform(url);
+  return { url, work: platform ? canonicalWork(platform, url) : null };
 }
 
 /** 未指定 --type 时在终端询问，直接回车取第一项；非终端环境用默认值。 */
@@ -125,10 +186,11 @@ async function addRecord(rawWork, rawOriginal, values, ask) {
   if (values.date && !/^\d{4}-\d{2}-\d{2}$/.test(values.date)) fail('--date 格式应为 YYYY-MM-DD');
 
   const workInput = pickUrl(rawWork ?? (ask ? await ask('搬运作品链接（可粘贴分享文案）：') : ''));
-  const originalUrl = pickUrl(rawOriginal ?? (ask ? await ask('原始作品链接：') : ''));
-  if (!workInput || !originalUrl) fail(`需要搬运链接和原作链接两个参数\n\n${USAGE}`);
+  const originalInput = pickUrl(rawOriginal ?? (ask ? await ask('原始作品链接：') : ''));
+  if (!workInput || !originalInput) fail(`需要搬运链接和原作链接两个参数\n\n${USAGE}`);
 
   const workUrl = await resolveUrl(workInput);
+  const originalUrl = await resolveUrl(originalInput);
   const platform = detectPlatform(workUrl);
   if (!platform) {
     const supported = Object.values(PLATFORMS).map((p) => p.label).join('、');
@@ -171,12 +233,19 @@ async function addRecord(rawWork, rawOriginal, values, ask) {
         return { added: false };
       }
     } catch (error) {
-      if (!(error instanceof ExtractError) && error.name !== 'TimeoutError' && error.name !== 'TypeError') throw error;
+      if (!isExtractFailure(error)) throw error;
       console.warn(`! 自动提取失败：${error.message}，转手动录入`);
       user = await manualUser(platform, values, ask);
       source = 'manual';
       if (ask && !avatarUrl) avatarUrl = pickUrl(await ask('头像图片链接（可留空）：')) ?? '';
     }
+  }
+
+  const originalAuthor = await findOriginalAuthor(originalUrl, values, records, ask);
+  assertDifferentAccount(platform, user, originalAuthor);
+  if (!originalAuthor) {
+    if (values.requireOriginalAuthor) fail('没有取到原作者昵称，请用 --original-name 指定');
+    console.warn('! 未记录原作者，可稍后用 npm run original 补上');
   }
 
   // 已收录过的账号沿用原有的公开 ID 和头像；显式传 --avatar 时才重新下载。
@@ -191,6 +260,7 @@ async function addRecord(rawWork, rawOriginal, values, ask) {
     title,
     workUrl: work.url,
     originalUrl: originalWork?.url ?? originalUrl,
+    ...(originalAuthor && { originalAuthor }),
     user,
     note: values.note ?? '',
     source,
@@ -211,9 +281,21 @@ async function add([rawWork, rawOriginal], values) {
 
 /** 收录一个 Issue 并关闭。关闭失败时下次运行会判定为已收录，再次关闭。 */
 async function syncIssue(issue, ask, userOptions) {
-  const { work, original, profile, type, note } = parseSubmission(issue.body);
+  const { work, original, profile, originalProfile, type, note } = parseSubmission(issue.body);
   if (!pickUrl(work) || !pickUrl(original)) fail('正文里没有可识别的搬运链接和原作链接');
-  const result = await addRecord(work, original, { type, note, profile: pickUrl(profile) ?? '', ...userOptions }, ask);
+  const result = await addRecord(
+    work,
+    original,
+    {
+      type,
+      note,
+      profile: pickUrl(profile) ?? '',
+      'original-profile': pickUrl(originalProfile) ?? '',
+      requireOriginalAuthor: true,
+      ...userOptions,
+    },
+    ask,
+  );
   await closeIssue(
     issue.number,
     result.added
@@ -265,19 +347,34 @@ async function sync(values) {
 async function remove(positionals) {
   const input = pickUrl(positionals[0]);
   if (!input) fail(USAGE);
-  const url = await resolveUrl(input);
-  const platform = detectPlatform(url);
-  const work = platform ? canonicalWork(platform, url) : null;
+  const { url, work } = await locateWork(input);
   const store = await loadStore(STORE_PATH);
   const { records } = store;
   const kept = records.filter((r) => r.id !== work?.key && r.workUrl !== work?.url);
   if (kept.length === records.length) fail(`未找到该收录：${url}`);
   await save({ ...store, records: kept });
-  const inUse = new Set(kept.map((r) => r.user.avatar));
-  for (const record of records) {
-    if (!inUse.has(record.user.avatar)) await removeAvatar(DOCS_DIR, record.user.avatar);
+  const avatarsOf = (record) => [record.user.avatar, record.originalAuthor?.avatar];
+  const inUse = new Set(kept.flatMap(avatarsOf));
+  for (const avatar of records.flatMap(avatarsOf)) {
+    if (!inUse.has(avatar)) await removeAvatar(DOCS_DIR, avatar);
   }
   console.log(`✔ 已撤销 ${records.length - kept.length} 条收录`);
+}
+
+async function setOriginalAuthor([rawWork], values) {
+  const input = pickUrl(rawWork);
+  if (!input) fail(USAGE);
+  const { url, work } = await locateWork(input);
+  const store = await loadStore(STORE_PATH);
+  const record = store.records.find((r) => r.id === work?.key || r.workUrl === work?.url);
+  if (!record) fail(`未找到该收录：${url}`);
+  const others = store.records.filter((r) => r !== record);
+  const author = await withPrompt((ask) => findOriginalAuthor(record.originalUrl, values, others, ask));
+  if (!author) fail('没有取到原作者昵称，请用 --original-name 指定');
+  assertDifferentAccount(record.platform, record.user, author);
+  record.originalAuthor = author;
+  await save(store);
+  console.log(`✔ 已标记原作者：${author.name}（${author.profileUrl || '无个人页'}）`);
 }
 
 async function setAvatar([rawProfile, rawImage]) {
@@ -312,6 +409,9 @@ const { positionals, values } = parseArgs({
     id: { type: 'string' },
     alias: { type: 'string' },
     avatar: { type: 'string' },
+    'original-name': { type: 'string' },
+    'original-profile': { type: 'string' },
+    'original-avatar': { type: 'string' },
     issue: { type: 'string' },
     help: { type: 'boolean', short: 'h' },
   },
@@ -324,6 +424,7 @@ try {
   else if (command === 'remove') await remove(args);
   else if (command === 'sync') await sync(values);
   else if (command === 'avatar') await setAvatar(args);
+  else if (command === 'original') await setOriginalAuthor(args, values);
   else if (command === 'build') console.log(`✔ 榜单共 ${(await save(await loadStore(STORE_PATH))).totalUsers} 人`);
   else fail(USAGE);
 } catch (error) {

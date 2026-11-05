@@ -70,10 +70,18 @@ function renderAvatar(entry) {
   return box;
 }
 
+/** 被搬运的原作者。早期记录可能没有这项，有个人页时昵称才带链接。 */
+function renderOriginalAuthor(author) {
+  const box = el('span', 'work-author', '搬运自');
+  box.append(renderAvatar(author), link(author.profileUrl, author.name));
+  return box;
+}
+
 function renderWork(work) {
   const item = el('li');
   const head = el('div', 'work-head');
   head.append(el('span', 'work-type', work.type), el('span', 'work-date', work.addedAt));
+  if (work.originalAuthor) head.append(renderOriginalAuthor(work.originalAuthor));
   if (work.title) head.append(el('span', 'work-title', work.title));
   const links = el('div', 'work-links');
   links.append(link(work.url, `被收录作品 ↗`), link(work.originalUrl, `原作 ↗`));

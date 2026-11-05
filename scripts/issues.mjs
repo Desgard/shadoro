@@ -10,7 +10,14 @@ export class GhError extends Error {}
 export const APPROVED_LABEL = '收录';
 
 /** 与 .github/ISSUE_TEMPLATE/submission.yml 的字段 label 一一对应。 */
-export const FIELDS = { work: '搬运作品链接', original: '原作链接', profile: '作者主页链接', type: '类型', note: '备注' };
+export const FIELDS = {
+  work: '搬运作品链接',
+  profile: '搬运者主页链接',
+  original: '原作链接',
+  originalProfile: '原作者主页链接',
+  type: '类型',
+  note: '备注',
+};
 
 /** 解析 Issue 表单生成的正文。同名标题以第一个为准，避免备注里的内容覆盖前面的字段。 */
 export function parseSubmission(body) {

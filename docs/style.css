@@ -266,6 +266,9 @@ h1 {
 .work-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
 .work-type { color: var(--safelight); font-weight: 700; }
 .work-date { color: var(--muted); font: 400 12px/1.5 var(--mono); }
+.work-author { display: inline-flex; align-items: center; gap: 6px; min-width: 0; color: var(--muted); align-self: center; }
+.work-author .avatar { flex: none; width: 20px; height: 20px; font-size: 10px; }
+.work-author a, .work-author span:last-child { color: var(--paper); overflow-wrap: anywhere; }
 .work-title { overflow-wrap: anywhere; }
 .work-links { display: flex; flex-wrap: wrap; gap: 4px 18px; margin-top: 3px; }
 .work-links a { color: var(--amber); }

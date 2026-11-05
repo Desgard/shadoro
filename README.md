@@ -16,7 +16,7 @@ npm run add -- "<搬运作品链接>" "<原作链接>"
 链接也可以直接粘贴 App 的分享文案（整段加引号），脚本会从中取出链接并跟随短链。原作可以是任意平台。
 不带参数运行 `npm run add` 会逐项询问。在终端运行且未指定 `--type` 时，脚本会询问类型，直接回车选直接搬运。
 
-脚本提取发布者的昵称、ID、个人页和平台，写入 `data/shadoro.yaml`，重新生成 `docs/leaderboard.json`，
+脚本提取发布者和原作者的昵称、个人页和头像，写入 `data/shadoro.yaml`，重新生成 `docs/leaderboard.json`，
 并输出此人的累计次数和名次。之后提交并推送即可更新线上榜单：
 
 ```bash
@@ -33,6 +33,9 @@ git add data docs && git commit -m "收录：<昵称>" && git push
 | `--alias <ID>` | 小红书号、抖音号等公开 ID，可被搜索 |
 | `--name <昵称> --profile <个人页>` | 手动指定发布者，跳过自动提取 |
 | `--avatar <图片链接>` | 手动指定头像 |
+| `--original-name <昵称>` | 手动指定原作者，跳过从原作页面提取 |
+| `--original-profile <个人页>` | 原作者个人页 |
+| `--original-avatar <图片链接>` | 原作者头像 |
 
 撤销一条收录：`npm run remove -- "<搬运作品链接>"`，账号不再在榜时头像文件一并删除。
 
@@ -42,11 +45,19 @@ git add data docs && git commit -m "收录：<昵称>" && git push
 npm run avatar -- "<个人页链接>" "<头像图片链接>"
 ```
 
+原作者显示在榜单展开后的每条作品里。没取到时收录照常完成，之后可以补全或修改：
+
+```bash
+npm run original -- "<搬运作品链接>" --original-name 昵称 --original-profile "<个人页>" --original-avatar "<头像图片链接>"
+```
+
+不带原作者选项时，脚本重新尝试从原作页面提取。
+
 ## 通过 Issue 收录
 
-任何人都可以在站点的[提交线索页面](https://desgard.github.io/shadoro/submit.html)，或直接用 Issue 模板「提交搬运线索」提交搬运链接、原作链接、作者主页链接和类型。
+任何人都可以在站点的[提交线索页面](https://desgard.github.io/shadoro/submit.html)，或直接用 Issue 模板「提交搬运线索」提交搬运链接、搬运者主页、原作链接、原作者主页和类型。
 页面是静态的，不保存 token：点击提交后带着内容跳转到 GitHub 的 Issue 模板，由提交者登录后确认创建，因此需要 GitHub 账号。
-Issue 不会直接进入榜单，要先由维护者核实。自动提取失败时，脚本优先使用 Issue 里的作者主页链接。
+Issue 不会直接进入榜单，要先由维护者核实。自动提取失败时，脚本优先使用 Issue 里的主页链接。
 
 本地需要安装并登录 [GitHub CLI](https://cli.github.com/)，并创建一次 `收录` 标签：
 
@@ -69,15 +80,15 @@ npm run sync
 ```
 
 脚本遍历所有未关闭的 Issue，只处理带 `收录` 标签的，写入 `data/shadoro.yaml` 和 `docs/leaderboard.json` 后，留言并关闭 Issue。
-已收录过的作品不重复计数，同样关闭；作品已在数据里的 Issue 即使没打标签也会关闭，比如用 `npm run add` 手动收录过的线索。自动提取失败时会在终端询问发布者信息，直接回车可跳过，Issue 保持打开。
+Issue 必须取到原作者昵称才会收录，否则跳过并保持打开。已收录过的作品不重复计数，同样关闭；作品已在数据里的 Issue 即使没打标签也会关闭，比如用 `npm run add` 手动收录过的线索。自动提取失败时会在终端询问发布者信息，直接回车可跳过，Issue 保持打开。
 已收录过的账号沿用原有的公开 ID 和头像，要换头像用 `npm run avatar`。
 
 小红书常常要求登录，脚本遇到这种情况不会绕过，只会跳过。这时在 Claude Code 里运行 `/issue-sync`：
-AI 先跑一遍 sync，再用本地浏览器打开被跳过的页面读取发布者昵称和头像，核对原作作者后完成收录。
+AI 先跑一遍 sync，再用本地浏览器打开被跳过的页面读取搬运者和原作者的昵称、头像，核对两者不同后完成收录。
 也可以自己查好后手动指定：
 
 ```bash
-npm run sync -- --issue 1 --name 昵称 --profile 个人页链接
+npm run sync -- --issue 1 --name 昵称 --profile 个人页链接 --original-name 原作者昵称 --original-profile 原作者个人页链接
 ```
 
 脚本不会自动提交，运行结束后照常提交并推送 `data/` 和 `docs/`。

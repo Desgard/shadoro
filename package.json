@@ -12,6 +12,7 @@
     "remove": "node scripts/cli.mjs remove",
     "sync": "node scripts/cli.mjs sync",
     "avatar": "node scripts/cli.mjs avatar",
+    "original": "node scripts/cli.mjs original",
     "build": "node scripts/cli.mjs build",
     "dev": "python3 -m http.server 8317 --directory docs",
     "test": "node --test"

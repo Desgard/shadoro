@@ -54,6 +54,19 @@ test('手写的纯数字 ID 转为字符串', async () => {
   assert.equal(records[0].addedAt, '2026-11-04');
 });
 
+test('原作者的纯数字昵称转为字符串，没有原作者时不补字段', async () => {
+  const path = await tempStore(`records:
+  - addedAt: 2026-11-04
+    user: { id: a, name: A }
+    originalAuthor: { name: 123, profileUrl: https://example.test/u }
+  - addedAt: 2026-11-05
+    user: { id: b, name: B }
+`);
+  const { records } = await loadStore(path);
+  assert.deepEqual(records[0].originalAuthor, { name: '123', profileUrl: 'https://example.test/u' });
+  assert.equal('originalAuthor' in records[1], false);
+});
+
 test('缺少 author、records 时取默认值', async () => {
   const { author, records } = await loadStore(await tempStore('# 空文件\n'));
   assert.equal(author, null);

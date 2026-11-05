@@ -16,6 +16,14 @@ body:
     validations:
       required: true
   - type: input
+    id: profile
+    attributes:
+      label: 搬运者主页链接
+      description: 发布搬运作品的账号主页，自动提取失败时用它确认账号
+      placeholder: https://www.xiaohongshu.com/user/profile/...
+    validations:
+      required: true
+  - type: input
     id: original
     attributes:
       label: 原作链接
@@ -24,11 +32,11 @@ body:
     validations:
       required: true
   - type: input
-    id: profile
+    id: originalProfile
     attributes:
-      label: 作者主页链接
-      description: 发布搬运作品的账号主页，自动提取失败时用它确认账号
-      placeholder: https://www.xiaohongshu.com/user/profile/...
+      label: 原作者主页链接
+      description: 被搬运的作者的主页，可以是任意平台，收录后用来标记原作者
+      placeholder: https://
     validations:
       required: true
   - type: dropdown

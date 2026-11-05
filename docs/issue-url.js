@@ -6,7 +6,7 @@ const TEMPLATE = 'submission.yml';
 export const MAX_URL_LENGTH = 8000;
 
 /** 与 .github/ISSUE_TEMPLATE/submission.yml 的字段 id 一一对应。 */
-export const FIELD_IDS = ['work', 'original', 'profile', 'type', 'note'];
+export const FIELD_IDS = ['work', 'profile', 'original', 'originalProfile', 'type', 'note'];
 
 /** 取出第一个链接，作品链接允许粘贴带链接的分享文案。 */
 export function pickLink(text) {
@@ -15,11 +15,20 @@ export function pickLink(text) {
 
 /** 返回第一个问题及其字段，全部通过时返回 null。 */
 export function validate(values) {
-  for (const [id, label] of [['work', '搬运作品链接'], ['original', '原作链接'], ['profile', '作者主页链接']]) {
+  const required = [
+    ['work', '搬运作品链接'],
+    ['profile', '搬运者主页链接'],
+    ['original', '原作链接'],
+    ['originalProfile', '原作者主页链接'],
+  ];
+  for (const [id, label] of required) {
     if (!pickLink(values[id])) return { id, message: `${label}需要包含 http:// 或 https:// 开头的链接` };
   }
   if (pickLink(values.work) === pickLink(values.original)) {
     return { id: 'original', message: '搬运作品和原作不能是同一个链接' };
+  }
+  if (pickLink(values.profile) === pickLink(values.originalProfile)) {
+    return { id: 'originalProfile', message: '搬运者和原作者不能是同一个账号' };
   }
   return null;
 }

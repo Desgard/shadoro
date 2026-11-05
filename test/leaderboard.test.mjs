@@ -53,6 +53,15 @@ test('昵称取最新值，旧昵称进入曾用名，alias 不被空值覆盖',
   assert.equal(entry.works[0].addedAt, '2026-02-01');
 });
 
+test('每条作品带上各自的原作者，缺失时为 null', () => {
+  const originalAuthor = { name: '原作者', profileUrl: 'https://example.test/u/o', avatar: 'avatars/o.webp' };
+  const [entry] = buildLeaderboard([
+    record('douyin', 'a', 'A', '2026-01-01'),
+    record('douyin', 'a', 'A', '2026-01-02', { originalAuthor }),
+  ]).entries;
+  assert.deepEqual(entry.works.map((work) => work.originalAuthor), [originalAuthor, null]);
+});
+
 test('头像取最新的非空值', () => {
   const first = record('douyin', 'a', 'A', '2026-01-01');
   first.user.avatar = 'avatars/a.webp';

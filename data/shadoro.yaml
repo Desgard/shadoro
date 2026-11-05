@@ -10,7 +10,7 @@ author:
       cta: 去关注
       url: https://www.xiaohongshu.com/user/profile/60c6a0cb0000000001009792
 
-# 收录记录，通常由 npm run add 写入。
+# 收录记录，通常由 npm run add 写入。originalAuthor 是被搬运的原作者。
 records:
   - id: xiaohongshu:6ae89c19000000002c01488f
     platform: xiaohongshu
@@ -27,6 +27,10 @@ records:
     note: ""
     source: manual
     addedAt: 2026-11-04
+    originalAuthor:
+      name: 冬有瓜無
+      profileUrl: https://www.xiaohongshu.com/user/profile/60c6a0cb0000000001009792
+      avatar: avatars/67faf9121b45652d.jpg
   - id: xiaohongshu:6ae97f97000000000300a9e5
     platform: xiaohongshu
     type: 直接搬运
@@ -42,3 +46,7 @@ records:
     note: ""
     source: manual
     addedAt: 2026-11-04
+    originalAuthor:
+      name: 📷HiNi
+      profileUrl: https://www.xiaohongshu.com/user/profile/642c1fb00000000012012fb7
+      avatar: avatars/111f8f33efba107c.jpg

@@ -6,8 +6,9 @@ import { FIELD_IDS, buildIssueUrl, pickLink, validate } from '../docs/issue-url.
 
 const values = {
   work: '看看这篇 https://www.xiaohongshu.com/explore/abc?a=1&b=2，复制后打开',
-  original: 'https://example.test/original',
   profile: 'https://www.xiaohongshu.com/user/profile/u1',
+  original: 'https://example.test/original',
+  originalProfile: 'https://example.test/author',
   type: 'AI融图',
   note: '',
 };
@@ -17,9 +18,11 @@ test('pickLink 从分享文案取出链接', () => {
   assert.equal(pickLink('没有链接'), null);
 });
 
-test('validate 要求三个链接，且作品与原作不同', () => {
+test('validate 要求四个链接，且作品与原作、搬运者与原作者不同', () => {
   assert.equal(validate(values), null);
   assert.equal(validate({ ...values, profile: '' }).id, 'profile');
+  assert.equal(validate({ ...values, originalProfile: '' }).id, 'originalProfile');
+  assert.equal(validate({ ...values, originalProfile: values.profile }).id, 'originalProfile');
   assert.equal(validate({ ...values, original: 'abc' }).id, 'original');
   assert.equal(validate({ ...values, original: pickLink(values.work) }).id, 'original');
 });

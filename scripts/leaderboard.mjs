@@ -26,6 +26,7 @@ export function buildLeaderboard(records) {
       title: record.title,
       url: record.workUrl,
       originalUrl: record.originalUrl,
+      originalAuthor: record.originalAuthor ?? null,
       note: record.note,
       addedAt: record.addedAt,
     });
