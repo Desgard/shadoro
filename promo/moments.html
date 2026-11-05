@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>写真泥棒 · 朋友圈宣传图</title>
+<style>
+  :root {
+    --ink: #0e0a09; --film: #181210; --line: #3a2c28; --paper: #efe6da;
+    --muted: #a8988c; --amber: #e9a84c; --safelight: #e5392f;
+    --serif: "Songti SC", "Noto Serif CJK SC", STSong, serif;
+    --sans: -apple-system, "PingFang SC", sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { width: 1080px; height: 1440px; overflow: hidden; background: var(--ink); }
+  body { -webkit-font-smoothing: antialiased; color: var(--paper); font-family: var(--sans); }
+
+  .poster {
+    position: relative; width: 1080px; height: 1440px; overflow: hidden;
+    background:
+      radial-gradient(1100px 620px at 50% -90px, #8f1a13c4, transparent 72%),
+      radial-gradient(900px 500px at 50% 800px, #5d0f0b66, transparent 75%),
+      var(--ink);
+  }
+  .grain { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .13; mix-blend-mode: overlay; pointer-events: none; }
+
+  .edge {
+    position: absolute; left: 72px; right: 72px; top: 60px;
+    display: flex; justify-content: space-between;
+    color: var(--amber); font: 600 20px/1 var(--mono); letter-spacing: .2em;
+  }
+  h1 {
+    position: absolute; left: 66px; top: 112px;
+    font: 900 228px/1.04 var(--serif); letter-spacing: .02em; white-space: nowrap;
+    text-shadow: 0 0 70px #e5392f99;
+  }
+  .romaji {
+    position: absolute; left: 74px; top: 368px;
+    color: var(--amber); font: 600 25px/1.4 var(--mono); letter-spacing: .18em;
+  }
+  .romaji span { color: #7a5a4c; }
+
+  /* 胶卷 */
+  .strip {
+    position: absolute; left: -70px; top: 458px; width: 1220px; height: 444px;
+    background: var(--film); transform: rotate(-2.4deg);
+    box-shadow: 0 30px 80px #000c, 0 0 0 1px #2a1f1c;
+  }
+  .holes {
+    position: absolute; left: 0; right: 0; height: 22px;
+    background: repeating-linear-gradient(to right, transparent 0 15px, var(--ink) 15px 41px, transparent 41px 56px);
+  }
+  .holes.t { top: 15px; } .holes.b { bottom: 15px; }
+  .cells { position: absolute; left: -298px; top: 52px; display: flex; gap: 20px; }
+  .cell { position: relative; flex: none; width: 436px; height: 326px; overflow: hidden; background: #000; }
+  .cell svg { display: block; width: 100%; height: 100%; }
+  .cell.neg svg { filter: invert(1) sepia(.65) hue-rotate(-18deg) brightness(.72); }
+  .cell.copy svg { transform: scaleX(-1); filter: saturate(1.9) contrast(1.22) hue-rotate(-16deg) brightness(1.05); }
+  .tag {
+    position: absolute; left: 14px; top: 14px; padding: 7px 13px 6px;
+    background: #0e0a09d9; color: var(--paper);
+    font: 600 21px/1.2 var(--sans); letter-spacing: .08em;
+  }
+  .fake {
+    position: absolute; right: 16px; bottom: 12px; color: #ffffffd9;
+    font: 700 30px/1 var(--sans); letter-spacing: .1em; text-shadow: 0 2px 8px #0009;
+  }
+  .stamp {
+    position: absolute; left: 112px; top: 112px; padding: 10px 22px 8px;
+    border: 7px solid #ff4a3d; color: #ff4a3d;
+    font: 900 74px/1 var(--serif); letter-spacing: .1em; white-space: nowrap;
+    transform: rotate(-11deg); background: #0e0a0966;
+    box-shadow: 0 0 34px #e5392f80, inset 0 0 18px #e5392f40;
+  }
+  .num {
+    position: absolute; bottom: 0; color: var(--amber);
+    font: 600 16px/1 var(--mono); letter-spacing: .14em; opacity: .85;
+  }
+
+  .say { position: absolute; left: 72px; right: 72px; top: 968px; }
+  .say h2 { font: 900 68px/1.3 var(--serif); white-space: nowrap; }
+  .say h2 em { font-style: normal; color: #ff5a4d; text-shadow: 0 0 34px #e5392fa6; }
+  .say p { margin-top: 12px; color: #d2c4b6; font: 400 36px/1.5 var(--serif); letter-spacing: .01em; }
+
+  .foot {
+    position: absolute; left: 72px; right: 72px; bottom: 70px; height: 216px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    padding-top: 0;
+  }
+  .meta { padding-bottom: 2px; }
+  .chips { display: flex; gap: 12px; }
+  .chips span { padding: 10px 18px; border: 1.5px solid #6d5448; color: var(--paper); font: 500 26px/1 var(--sans); }
+  .line { margin-top: 24px; color: #d2c4b6; font: 400 28px/1.5 var(--sans); }
+  .url { margin-top: 10px; color: var(--amber); font: 600 26px/1.3 var(--mono); }
+  .qr-wrap { display: flex; align-items: flex-end; }
+  .qr { width: 216px; height: 216px; padding: 16px; background: var(--paper); border-radius: 3px; }
+  .qr svg { display: block; width: 100%; height: 100%; }
+  .scan { writing-mode: vertical-rl; margin-right: 14px; color: var(--amber); font: 600 24px/1 var(--sans); letter-spacing: .24em; }
+</style>
+</head>
+<body>
+<!-- 画面是手绘的 SVG：宣传搬运黑榜，不用任何别人的照片。 -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#27304f"/><stop offset=".42" stop-color="#b4594f"/>
+      <stop offset=".66" stop-color="#f0a860"/><stop offset="1" stop-color="#f8d79a"/>
+    </linearGradient>
+    <radialGradient id="glow"><stop offset="0" stop-color="#fff0c4" stop-opacity=".95"/><stop offset="1" stop-color="#fff0c4" stop-opacity="0"/></radialGradient>
+    <symbol id="scene" viewBox="0 0 480 326" preserveAspectRatio="xMidYMid slice">
+      <rect width="480" height="326" fill="url(#sky)"/>
+      <circle cx="322" cy="178" r="130" fill="url(#glow)"/>
+      <circle cx="322" cy="178" r="36" fill="#fff3d2"/>
+      <path d="M0 196 L58 150 L104 182 L168 118 L226 176 L286 146 L352 196 L416 160 L480 200 V326 H0Z" fill="#6c4257"/>
+      <path d="M0 232 L74 192 L150 226 L232 176 L304 224 L390 196 L480 236 V326 H0Z" fill="#3e2a44"/>
+      <path d="M0 278 L120 236 L208 262 L310 224 L402 262 L480 244 V326 H0Z" fill="#20172a"/>
+      <!-- 山脊上的摄影者 -->
+      <g fill="#100b16" transform="translate(122 202)">
+        <circle cx="8" cy="-13" r="5.6"/>
+        <path d="M2 -7 h12 l2 18 h-5 l-1 -9 h-3 l-1 9 h-5 z"/>
+        <path d="M2 11 h5 l-1 26 h-6 z M10 11 h5 l3 26 h-6 z"/>
+        <path d="M13 -5 l14 -8 2 4 -14 9 z"/><rect x="25" y="-19" width="13" height="9" rx="1.5"/>
+      </g>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="poster">
+  <div class="edge"><span>SHADORO 400</span><span>▸ 1A</span><span>SAFELIGHT ONLY</span></div>
+  <h1>写真泥棒</h1>
+  <p class="romaji">SHASHIN DOROBŌ <span>／</span> 照片贼名录</p>
+
+  <div class="strip">
+    <div class="holes t"></div><div class="holes b"></div>
+    <div class="cells">
+      <div class="cell neg"><svg><use href="#scene"/></svg></div>
+      <div class="cell"><svg><use href="#scene"/></svg><span class="tag">原作</span></div>
+      <div class="cell copy"><svg><use href="#scene"/></svg><span class="tag">搬运账号</span><span class="fake">© 原创</span><span class="stamp">搬运</span></div>
+      <div class="cell neg"><svg><use href="#scene"/></svg></div>
+    </div>
+    <span class="num" style="left:162px;bottom:28px">12A</span>
+    <span class="num" style="left:618px;bottom:28px">13A</span>
+    <span class="num" style="left:1074px;bottom:28px">14A</span>
+  </div>
+
+  <div class="say">
+    <h2>换个账号，就成了<em>“原创”</em>？</h2>
+    <p>把底片冲出来：谁拿了谁的，一格一格都有原作对照。</p>
+  </div>
+
+  <div class="foot">
+    <div class="meta">
+      <div class="chips"><span>小红书</span><span>抖音</span><span>微信公众号</span></div>
+      <p class="line">查账号是否在榜 · 提交搬运线索</p>
+      <p class="url">www.desgard.com/shadoro</p>
+    </div>
+    <div class="qr-wrap"><span class="scan">扫码查验底片</span><div class="qr"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 29 29" shape-rendering="crispEdges"><path stroke="#0e0a09" d="M0 0.5h7m2 0h1m1 0h5m1 0h4m1 0h7M0 1.5h1m5 0h1m2 0h1m2 0h5m3 0h1m1 0h1m5 0h1M0 2.5h1m1 0h3m1 0h1m1 0h2m1 0h1m1 0h1m1 0h1m3 0h2m1 0h1m1 0h3m1 0h1M0 3.5h1m1 0h3m1 0h1m1 0h1m1 0h1m3 0h2m1 0h3m2 0h1m1 0h3m1 0h1M0 4.5h1m1 0h3m1 0h1m1 0h1m2 0h2m2 0h6m1 0h1m1 0h3m1 0h1M0 5.5h1m5 0h1m1 0h2m2 0h1m4 0h1m2 0h1m1 0h1m5 0h1M0 6.5h7m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h1m1 0h7M8 7.5h3m1 0h1m1 0h1m1 0h1m2 0h1M0 8.5h1m1 0h5m5 0h1m3 0h2m4 0h5M2 9.5h1m1 0h2m1 0h2m1 0h1m1 0h4m3 0h6m3 0h1M0 10.5h4m2 0h2m1 0h3m1 0h6M0 11.5h6m1 0h2m2 0h1m1 0h1m1 0h1m3 0h3m1 0h1m1 0h1m1 0h1M4 12.5h4m3 0h2m1 0h2m1 0h1m1 0h1m5 0h2M1 13.5h2m1 0h2m5 0h1m3 0h5m1 0h2m1 0h1m3 0h1M0 14.5h1m3 0h1m1 0h1m1 0h1m2 0h2m5 0h1m4 0h1m1 0h2M2 15.5h1m4 0h1m1 0h1m2 0h1m1 0h1m1 0h1m1 0h1m1 0h1m2 0h2m2 0h1M0 16.5h1m4 0h2m2 0h4m4 0h1m5 0h1m1 0h2M0 17.5h1m1 0h1m2 0h1m3 0h1m1 0h1m1 0h3m2 0h3m1 0h3m1 0h1m1 0h1M0 18.5h1m1 0h1m3 0h2m2 0h1m2 0h4m1 0h1m2 0h1m1 0h1m2 0h1M0 19.5h1m1 0h2m1 0h1m3 0h1m3 0h1m2 0h1m2 0h1m2 0h3m2 0h1M0 20.5h1m1 0h1m1 0h4m4 0h1m1 0h1m2 0h1m2 0h5m1 0h3M8 21.5h2m1 0h2m5 0h3m3 0h5M0 22.5h7m2 0h1m2 0h1m2 0h2m2 0h2m1 0h1m1 0h3M0 23.5h1m5 0h1m1 0h1m2 0h2m1 0h1m1 0h1m1 0h3m3 0h1m2 0h1M0 24.5h1m1 0h3m1 0h1m1 0h1m1 0h3m4 0h1m2 0h5m1 0h2M0 25.5h1m1 0h3m1 0h1m1 0h2m3 0h2m1 0h4m3 0h1m1 0h4M0 26.5h1m1 0h3m1 0h1m1 0h1m1 0h1m4 0h1m1 0h1m3 0h7M0 27.5h1m5 0h1m2 0h1m1 0h1m1 0h1m6 0h1m2 0h1m1 0h1m1 0h1M0 28.5h7m1 0h3m1 0h1m2 0h3m1 0h1m2 0h5"/></svg></div></div>
+  </div>
+
+  <svg class="grain"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n)"/></svg>
+</div>
+</body>
+</html>
