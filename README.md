@@ -5,7 +5,36 @@
 
 线上地址：<https://desgard.github.io/shadoro/>
 
-## 收录
+## 用 AI 客户端提交搬运作品
+
+这是最省事的提交方式，不用自己查作者信息，也不用记命令。项目带有两个通用的 Skill，已兼容多种大模型客户端：
+
+| Skill | 作用 |
+| --- | --- |
+| [`record-repost`](.agents/skills/record-repost/SKILL.md) | 控制浏览器读取两位作者的昵称、个人页和头像，再运行 `npm run add` 写入 `data/shadoro.yaml` |
+| [`submit-repost-pr`](.agents/skills/submit-repost-pr/SKILL.md) | 校验数据后提交到新分支，向 `main` 分支发起 Pull Request |
+
+克隆仓库并运行 `npm install`，用任一客户端打开项目，把两个链接发给 AI：
+
+```text
+收录搬运。搬运作品：<搬运作品链接>，原作：<原作链接>
+```
+
+AI 写入数据后会接着发起 PR，不想发起时说一声“先不提交”。发起 PR 需要登录 [GitHub CLI](https://cli.github.com/)，没有仓库写权限时会通过你的 fork 提交。PR 不会自动合并，维护者核实并合并后线上榜单才更新。
+类型默认是直接搬运，只有明确说明时才会改成其他类型。
+
+| 客户端 | 接入方式 |
+| --- | --- |
+| Claude Code | 打开项目即可用，`.claude/skills/` 下是软链接 |
+| Codex | 打开项目即可用，读取 `.agents/skills/` |
+| WorkBuddy | 打开项目即可用，`.workbuddy/skills/` 下是软链接 |
+| Cursor、GitHub Copilot、Windsurf、Zed 等读取 `AGENTS.md` 的客户端 | 由 [`AGENTS.md`](AGENTS.md) 指向 Skill |
+| Gemini CLI、OpenCode、Goose 等支持 [Agent Skills](https://agentskills.io/) 的客户端 | 如果没有自动发现，让它读取 `.agents/skills/` 下的 `SKILL.md`。Gemini CLI 读取 `AGENTS.md` 需要先配置 |
+| ChatGPT、Kimi、豆包、DeepSeek 等不能访问本地文件的网页版 | 把 `SKILL.md` 的内容发给它，再把生成的命令拿到本地运行 |
+
+Skill 只修改 `.agents/skills/` 下的这一份，其他目录都是软链接。需要浏览器和命令行工具才能走完全程，缺浏览器时由脚本尝试提取，缺命令行时由 AI 给出命令。
+
+## 手动收录
 
 需要 Node.js 20 及以上，首次使用先运行 `npm install`。
 
@@ -52,21 +81,6 @@ npm run original -- "<搬运作品链接>" --original-name 昵称 --original-pro
 ```
 
 不带原作者选项时，脚本重新尝试从原作页面提取。
-
-## 用 AI 客户端收录
-
-项目带有通用的 Skill [`record-repost`](.agents/skills/record-repost/SKILL.md)。把搬运作品链接和原作链接发给 AI，它会控制浏览器读取两位作者的昵称、个人页和头像，再运行 `npm run add` 写入 `data/shadoro.yaml`。
-类型默认是直接搬运，只有明确说明时才会改成其他类型。
-
-| 客户端 | 接入方式 |
-| --- | --- |
-| Claude Code | 打开项目即可用，`.claude/skills/` 下是软链接 |
-| Codex | 打开项目即可用，读取 `.agents/skills/` |
-| WorkBuddy | 打开项目即可用，`.workbuddy/skills/` 下是软链接 |
-| 只读 `AGENTS.md` 的客户端 | 由 [`AGENTS.md`](AGENTS.md) 指向 Skill |
-| ChatGPT 网页版等不能访问本地文件的客户端 | 把 `SKILL.md` 的内容发给它，再把生成的命令拿到本地运行 |
-
-Skill 只修改 `.agents/skills/record-repost/SKILL.md` 这一份。需要浏览器和命令行工具才能走完全程，缺浏览器时由脚本尝试提取，缺命令行时由 AI 给出命令。
 
 ## 通过 Issue 收录
 

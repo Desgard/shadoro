@@ -87,4 +87,8 @@ npm run add -- '<搬运作品链接>' '<原作链接>' --type '<类型>' \
 - 输出“该作品已收录”时没有写入，如实告诉用户。
 - 输出“头像未保存”时收录已完成。搬运者的头像用 `npm run avatar` 补，原作者的头像用 `npm run original` 补。
 
-命令不会自动提交，提交和推送等用户决定。
+## 6. 发起 PR
+
+写入成功后，继续按 [`submit-repost-pr`](../submit-repost-pr/SKILL.md) 向 `main` 分支发起 Pull Request，不用再问用户。
+
+以下情况不要发起：输出“该作品已收录”、命令失败、用户说了先不提交。
