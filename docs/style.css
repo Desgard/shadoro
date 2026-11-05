@@ -293,7 +293,10 @@ h1 {
   padding: 0 20px 52px;
 }
 .author .edge-print { margin-bottom: 10px; }
-.author-cards { display: grid; gap: 4px; }
+.author-body { display: flex; align-items: center; gap: 10px; }
+.author-avatar { flex: none; display: flex; }
+.author-avatar .avatar { width: 40px; height: 40px; font-size: 16px; }
+.author-cards { flex: 1; min-width: 0; display: grid; gap: 4px; }
 
 /* 刻意做成一行小字，避免和榜单条目混淆。 */
 .author-card {
@@ -305,7 +308,6 @@ h1 {
   line-height: 1.5;
   text-decoration: none;
 }
-.author-card .avatar { flex: none; width: 24px; height: 24px; font-size: 11px; }
 .author-text { min-width: 0; }
 .author-text strong { font-weight: 400; color: var(--paper); }
 .author-text small { margin-left: .6em; font-size: inherit; }

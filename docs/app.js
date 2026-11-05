@@ -188,12 +188,13 @@ function renderAuthor(author) {
     card.rel = 'noopener noreferrer';
     const text = el('span', 'author-text');
     text.append(el('strong', '', sns.title ?? ''), el('small', '', sns.description ?? ''));
-    card.append(renderAvatar({ name: '作者', avatar: author.avatar }), text);
+    card.append(text);
     if (sns.cta) card.append(el('span', 'author-cta', `${sns.cta} ↗`));
     return card;
   });
   $('author-cards').replaceChildren(...cards.filter(Boolean));
   $('author').hidden = !$('author-cards').children.length;
+  if (!$('author').hidden) $('author-avatar').replaceChildren(renderAvatar({ name: '作者', avatar: author.avatar }));
 }
 
 async function main() {
