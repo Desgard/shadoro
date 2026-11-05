@@ -31,7 +31,7 @@ const USAGE = `用法：
   npm run add -- <搬运链接> <原作链接> [选项]   收录一条（不带链接则逐项询问）
   npm run remove -- <搬运链接>                  撤销一条收录
   npm run avatar -- <个人页链接> <头像图片链接>  设置已收录账号的头像
-  npm run sync                                  收录带「${APPROVED_LABEL}」标签的 Issue 并关闭
+  npm run sync                                  收录带「${APPROVED_LABEL}」标签的 Issue 并关闭，作品已收录的 Issue 也一并关闭
   npm run sync -- --issue <编号> --name <昵称> --profile <链接>
                                                 自动提取失败时，手动指定某个 Issue 的发布者
   npm run build                                 由 data/shadoro.yaml 重新生成榜单
@@ -223,14 +223,26 @@ async function syncIssue(issue, ask, userOptions) {
   console.log(`✔ 已关闭 #${issue.number}`);
 }
 
+/** 作品已在数据里，说明维护者处理过，Issue 不必再等标签。 */
+async function isRecorded(issue, records) {
+  const input = pickUrl(parseSubmission(issue.body).work);
+  if (!input) return false;
+  const url = await resolveUrl(input);
+  const platform = detectPlatform(url);
+  const key = platform && canonicalWork(platform, url)?.key;
+  return records.some((record) => record.id === key);
+}
+
 async function sync(values) {
   const userOptions = Object.fromEntries(USER_OPTIONS.filter((key) => values[key]).map((key) => [key, values[key]]));
   if (Object.keys(userOptions).length && !values.issue) fail('手动指定发布者时需要用 --issue 选定一个 Issue');
   const issues = await listOpenIssues();
-  const labeled = issues.filter(isApproved);
-  const approved = values.issue ? labeled.filter((issue) => String(issue.number) === values.issue) : labeled;
+  const { records } = await loadStore(STORE_PATH);
+  const ready = await Promise.all(issues.map(async (issue) => isApproved(issue) || (await isRecorded(issue, records))));
+  const runnable = issues.filter((_, index) => ready[index]);
+  const approved = values.issue ? runnable.filter((issue) => String(issue.number) === values.issue) : runnable;
   if (values.issue && !approved.length) fail(`#${values.issue} 不是带「${APPROVED_LABEL}」标签的未关闭 Issue`);
-  const waiting = issues.filter((issue) => !isApproved(issue) && parseSubmission(issue.body).work);
+  const waiting = issues.filter((issue, index) => !ready[index] && parseSubmission(issue.body).work);
   let skipped = 0;
   await withPrompt(async (ask) => {
     for (const issue of approved) {
