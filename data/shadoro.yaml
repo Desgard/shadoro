@@ -150,3 +150,22 @@ records:
     note: ""
     source: manual
     addedAt: 2026-11-05
+  - id: xiaohongshu:6aedaf6b000000002a012fc7
+    platform: xiaohongshu
+    type: 直接搬运
+    title: ""
+    workUrl: https://www.xiaohongshu.com/discovery/item/6aedaf6b000000002a012fc7?source=webshare&xhsshare=pc_web&xsec_token=ABBoobWy1OYxKsMi0YS2k4GuUUemVkb_Xl1PlkLWdjnrg=&xsec_source=pc_share
+    originalUrl: https://www.xiaohongshu.com/discovery/item/6ad35c76000000001c02d217?source=webshare&xhsshare=pc_web&xsec_token=ABwYgLfadP0SvCkG--6LKnGuQeYeYyY2xqSkVvnhrFYT4=&xsec_source=pc_share
+    originalAuthor:
+      name: 徐八喵
+      profileUrl: https://www.xiaohongshu.com/user/profile/581856ee5e87e7211b689184
+      avatar: avatars/d9df6635aa98489b.jpg
+    user:
+      id: 65d03ec1000000000401f301
+      name: 家有miko酱
+      alias: "10454004481"
+      profileUrl: https://www.xiaohongshu.com/user/profile/65d03ec1000000000401f301
+      avatar: avatars/20ea764fea58ff8a.jpg
+    note: ""
+    source: manual
+    addedAt: 2026-11-07
