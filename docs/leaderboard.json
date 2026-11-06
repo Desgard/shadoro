@@ -18,8 +18,8 @@
       }
     ]
   },
-  "totalWorks": 7,
-  "totalUsers": 2,
+  "totalWorks": 8,
+  "totalUsers": 3,
   "entries": [
     {
       "key": "wechat:Mzc4MDE1NzYyMg==",
@@ -141,6 +141,34 @@
       "count": 3,
       "lastAddedAt": "2026-11-05",
       "rank": 2
+    },
+    {
+      "key": "xiaohongshu:65d03ec1000000000401f301",
+      "platform": "xiaohongshu",
+      "id": "65d03ec1000000000401f301",
+      "alias": "10454004481",
+      "avatar": "avatars/20ea764fea58ff8a.jpg",
+      "profileUrl": "https://www.xiaohongshu.com/user/profile/65d03ec1000000000401f301",
+      "works": [
+        {
+          "type": "直接搬运",
+          "title": "",
+          "url": "https://www.xiaohongshu.com/discovery/item/6aedaf6b000000002a012fc7?source=webshare&xhsshare=pc_web&xsec_token=ABBoobWy1OYxKsMi0YS2k4GuUUemVkb_Xl1PlkLWdjnrg=&xsec_source=pc_share",
+          "originalUrl": "https://www.xiaohongshu.com/discovery/item/6ad35c76000000001c02d217?source=webshare&xhsshare=pc_web&xsec_token=ABwYgLfadP0SvCkG--6LKnGuQeYeYyY2xqSkVvnhrFYT4=&xsec_source=pc_share",
+          "originalAuthor": {
+            "name": "徐八喵",
+            "profileUrl": "https://www.xiaohongshu.com/user/profile/581856ee5e87e7211b689184",
+            "avatar": "avatars/d9df6635aa98489b.jpg"
+          },
+          "note": "",
+          "addedAt": "2026-11-07"
+        }
+      ],
+      "name": "家有miko酱",
+      "formerNames": [],
+      "count": 1,
+      "lastAddedAt": "2026-11-07",
+      "rank": 3
     }
   ]
 }
