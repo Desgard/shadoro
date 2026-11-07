@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { test } from 'node:test';
+import { afterEach, test } from 'node:test';
 import {
   ExtractError,
   TYPES,
@@ -10,6 +10,7 @@ import {
   parseWechat,
   parseXiaohongshu,
   pickUrl,
+  resolveUrl,
   userIdFromProfile,
 } from '../scripts/extract.mjs';
 
@@ -35,11 +36,19 @@ test('pickUrl 从分享文案中取链接', () => {
   assert.equal(pickUrl('www.douyin.com/video/1'), 'https://www.douyin.com/video/1');
   assert.equal(pickUrl('https://a.test/x\\?t\\=1\\&b\\=2'), 'https://a.test/x?t=1&b=2');
   assert.equal(pickUrl('notxiaohongshu.com/explore/abc'), null);
+  assert.equal(pickUrl('看这个 https://xhslink.cn/o/6mH7xpbZuQk，太离谱了'), 'https://xhslink.cn/o/6mH7xpbZuQk');
+  assert.equal(pickUrl('xhslink.cn/o/6mH7xpbZuQk'), 'https://xhslink.cn/o/6mH7xpbZuQk');
+  assert.equal(pickUrl('www.rednote.com/discovery/item/abc'), 'https://www.rednote.com/discovery/item/abc');
+  assert.equal(pickUrl('notrednote.com/discovery/item/abc'), null);
 });
 
 test('detectPlatform 不被相似域名欺骗', () => {
   assert.equal(detectPlatform('https://v.douyin.com/x'), 'douyin');
   assert.equal(detectPlatform('https://xhslink.com/x'), 'xiaohongshu');
+  assert.equal(detectPlatform('https://xhslink.cn/o/x'), 'xiaohongshu');
+  assert.equal(detectPlatform('https://www.rednote.com/discovery/item/x'), 'xiaohongshu');
+  assert.equal(detectPlatform('https://notxhslink.cn/o/x'), null);
+  assert.equal(detectPlatform('https://notrednote.com/x'), null);
   assert.equal(detectPlatform('https://mp.weixin.qq.com/s/x'), 'wechat');
   assert.equal(detectPlatform('https://notdouyin.com/x'), null);
   assert.equal(detectPlatform('https://weixin.qq.com/x'), null);
@@ -51,6 +60,16 @@ test('canonicalWork 把小红书链接统一成 discovery/item 分享格式', ()
     `https://www.xiaohongshu.com/discovery/item/${XHS_ID}?source=webshare&xhsshare=pc_web&xsec_token=abc=&xsec_source=pc_share`,
   );
   assert.equal(canonicalWork('xiaohongshu', XHS_URL).url, `https://www.xiaohongshu.com/discovery/item/${XHS_ID}`);
+});
+
+test('canonicalWork 把 rednote.com 链接规范成 xiaohongshu.com，key 不变', () => {
+  const work = canonicalWork('xiaohongshu', `https://www.rednote.com/discovery/item/${XHS_ID}?xsec_token=abc%3D&xsec_source=app_share`);
+  assert.equal(work.key, `xiaohongshu:${XHS_ID}`);
+  assert.equal(
+    work.url,
+    `https://www.xiaohongshu.com/discovery/item/${XHS_ID}?source=webshare&xhsshare=pc_web&xsec_token=abc=&xsec_source=pc_share`,
+  );
+  assert.equal(work.key, canonicalWork('xiaohongshu', XHS_URL).key);
 });
 
 test('canonicalWork 让同一作品的不同链接得到同一 key', () => {
@@ -127,4 +146,29 @@ test('parseWechat 取公众号信息并解码实体', () => {
 
 test('parseWechat 对验证页抛 ExtractError', () => {
   assert.throws(() => parseWechat('<html>环境异常</html>'), ExtractError);
+});
+
+const realFetch = globalThis.fetch;
+afterEach(() => {
+  globalThis.fetch = realFetch;
+});
+
+test('resolveUrl 跟随 xhslink 短链到 rednote.com', async () => {
+  const target = `https://www.rednote.com/discovery/item/${XHS_ID}?xsec_token=abc`;
+  const requested = [];
+  globalThis.fetch = async (url) => {
+    requested.push(url);
+    return { url: target, body: null };
+  };
+  for (const short of ['https://xhslink.cn/o/6mH7xpbZuQk', 'https://www.xhslink.cn/o/x', 'https://xhslink.com/a/x']) {
+    assert.equal(await resolveUrl(short), target);
+  }
+  assert.equal(requested.length, 3);
+});
+
+test('resolveUrl 不请求非短链，也不被相似域名欺骗', async () => {
+  globalThis.fetch = async () => assert.fail('不应发起请求');
+  for (const url of ['https://notxhslink.cn/o/x', `https://www.rednote.com/discovery/item/${XHS_ID}`]) {
+    assert.equal(await resolveUrl(url), url);
+  }
 });

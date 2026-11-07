@@ -7,10 +7,12 @@ const MOBILE_UA =
   'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
 
 export const PLATFORMS = {
-  xiaohongshu: { label: '小红书', hosts: ['xiaohongshu.com', 'xhslink.com'] },
+  xiaohongshu: { label: '小红书', hosts: ['xiaohongshu.com', 'rednote.com', 'xhslink.com', 'xhslink.cn'] },
   douyin: { label: '抖音', hosts: ['douyin.com', 'iesdouyin.com'] },
   wechat: { label: '微信公众号', hosts: ['mp.weixin.qq.com'] },
 };
+
+const XHS_SHORT_HOSTS = ['xhslink.com', 'xhslink.cn'];
 
 export const TYPES = ['直接搬运', '改图搬运', 'AI融图'];
 
@@ -29,7 +31,7 @@ export class ExtractError extends Error {}
 export function pickUrl(text) {
   const input = String(text ?? '').replace(/\\/g, '');
   const tail = String.raw`[^\s<>"'，。！？、；）】》]+`;
-  const hosts = String.raw`(?:[\w-]+\.)*(?:xiaohongshu\.com|xhslink\.com|douyin\.com|iesdouyin\.com|mp\.weixin\.qq\.com)`;
+  const hosts = String.raw`(?:[\w-]+\.)*(?:xiaohongshu\.com|rednote\.com|xhslink\.com|xhslink\.cn|douyin\.com|iesdouyin\.com|mp\.weixin\.qq\.com)`;
   const match = input.match(new RegExp(`https?://${tail}|(?<![\\w.-])${hosts}/${tail}`));
   if (!match) return null;
   const url = match[0].replace(/[.,;:!?)\]]+$/, '');
@@ -189,7 +191,8 @@ async function fetchPage(url, userAgent) {
 export async function resolveUrl(url) {
   try {
     const host = new URL(url).hostname;
-    if (host !== 'xhslink.com' && !host.endsWith('.xhslink.com') && host !== 'v.douyin.com') return url;
+    const isShort = host === 'v.douyin.com' || XHS_SHORT_HOSTS.some((h) => host === h || host.endsWith(`.${h}`));
+    if (!isShort) return url;
     const response = await fetch(url, {
       headers: { 'user-agent': MOBILE_UA },
       redirect: 'follow',
