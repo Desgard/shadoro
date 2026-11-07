@@ -169,3 +169,22 @@ records:
     note: ""
     source: manual
     addedAt: 2026-11-07
+  - id: xiaohongshu:6aede6f9000000002203b79e
+    platform: xiaohongshu
+    type: AI融图
+    title: ""
+    workUrl: https://www.xiaohongshu.com/discovery/item/6aede6f9000000002203b79e?source=webshare&xhsshare=pc_web&xsec_token=CBi1Qgc5xm42wvs-Vkf_1jYZ-rt65rpeXHGHvmakEU7C0=&xsec_source=pc_share
+    originalUrl: https://www.xiaohongshu.com/discovery/item/6aeb1ffb000000000300ba5d?source=webshare&xhsshare=pc_web&xsec_token=ABq-wCOxIw9DdKbMlOl4KSdDl1rrd7da2lXB5kO2XnMuM=&xsec_source=pc_share
+    originalAuthor:
+      name: 一一禾
+      profileUrl: https://www.xiaohongshu.com/user/profile/618f506d000000001000aec2
+      avatar: avatars/821542875c036b6b.jpg
+    user:
+      id: 666fc6fb000000000303200b
+      name: 陈栗荔_Liz🌰
+      alias: LiliChen_Life
+      profileUrl: https://www.xiaohongshu.com/user/profile/666fc6fb000000000303200b
+      avatar: avatars/f70309c988716491.jpg
+    note: ""
+    source: manual
+    addedAt: 2026-11-07
