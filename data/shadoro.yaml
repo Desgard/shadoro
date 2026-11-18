@@ -207,3 +207,22 @@ records:
     note: ""
     source: manual
     addedAt: 2026-11-18
+  - id: xiaohongshu:6afe169f000000002501e886
+    platform: xiaohongshu
+    type: 直接搬运
+    title: ""
+    workUrl: https://www.xiaohongshu.com/discovery/item/6afe169f000000002501e886?source=webshare&xhsshare=pc_web&xsec_token=CB5Eq-afN5666NJ7gyj_b1wl1Qr0SMxcB6fPNbGazwDrw=&xsec_source=pc_share
+    originalUrl: https://www.xiaohongshu.com/discovery/item/6add570f000000002c01aa3c?source=webshare&xhsshare=pc_web&xsec_token=ABQVwI90FIj4KMeisEMIIAiaYKVm4ALJeiJ1bzv0iVoXM=&xsec_source=pc_share
+    originalAuthor:
+      name: 一一禾
+      profileUrl: https://www.xiaohongshu.com/user/profile/618f506d000000001000aec2
+      avatar: avatars/821542875c036b6b.jpg
+    user:
+      id: 65c795ba0000000013027593
+      name: 小红薯65C7BB1E
+      alias: "3235475386"
+      profileUrl: https://www.xiaohongshu.com/user/profile/65c795ba0000000013027593
+      avatar: avatars/79afb0965cbaac32.jpg
+    note: ""
+    source: manual
+    addedAt: 2026-11-19
