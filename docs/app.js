@@ -84,7 +84,7 @@ function renderWork(work) {
   if (work.originalAuthor) head.append(renderOriginalAuthor(work.originalAuthor));
   if (work.title) head.append(el('span', 'work-title', work.title));
   const links = el('div', 'work-links');
-  links.append(link(work.url, `被收录作品 ↗`), link(work.originalUrl, `原作 ↗`));
+  links.append(link(work.url, `抄袭作品链接 ↗`), link(work.originalUrl, `原作者作品链接 ↗`));
   item.append(head, links);
   if (work.note) item.append(el('p', 'work-note', work.note));
   return item;
