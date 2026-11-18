@@ -188,3 +188,22 @@ records:
     note: ""
     source: manual
     addedAt: 2026-11-07
+  - id: xiaohongshu:6afd5721000000002b03437d
+    platform: xiaohongshu
+    type: 直接搬运
+    title: ""
+    workUrl: https://www.xiaohongshu.com/discovery/item/6afd5721000000002b03437d?source=webshare&xhsshare=pc_web&xsec_token=CBzqzf0gCYBXlyac5xb3TEo-SvoD7ba0S2SZ8hc3ljvDw=&xsec_source=pc_share
+    originalUrl: https://www.xiaohongshu.com/discovery/item/6afcf4d9000000002b0379d2?source=webshare&xhsshare=pc_web&xsec_token=ABfMQNw1G167t05yZeUn5yksVVoUcVmb0OLDMBTE1fy0I=&xsec_source=pc_share
+    originalAuthor:
+      name: 冬有瓜無
+      profileUrl: https://www.xiaohongshu.com/user/profile/60c6a0cb0000000001009792
+      avatar: avatars/67faf9121b45652d.jpg
+    user:
+      id: 6651399d000000000d02635f
+      name: 胶片Boss
+      alias: ""
+      profileUrl: https://www.xiaohongshu.com/user/profile/6651399d000000000d02635f
+      avatar: avatars/92e44a2ed509aeb0.jpg
+    note: ""
+    source: manual
+    addedAt: 2026-11-18

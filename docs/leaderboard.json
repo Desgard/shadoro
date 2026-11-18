@@ -18,8 +18,8 @@
       }
     ]
   },
-  "totalWorks": 9,
-  "totalUsers": 4,
+  "totalWorks": 10,
+  "totalUsers": 5,
   "entries": [
     {
       "key": "wechat:Mzc4MDE1NzYyMg==",
@@ -141,6 +141,34 @@
       "count": 3,
       "lastAddedAt": "2026-11-05",
       "rank": 2
+    },
+    {
+      "key": "xiaohongshu:6651399d000000000d02635f",
+      "platform": "xiaohongshu",
+      "id": "6651399d000000000d02635f",
+      "alias": "",
+      "avatar": "avatars/92e44a2ed509aeb0.jpg",
+      "profileUrl": "https://www.xiaohongshu.com/user/profile/6651399d000000000d02635f",
+      "works": [
+        {
+          "type": "直接搬运",
+          "title": "",
+          "url": "https://www.xiaohongshu.com/discovery/item/6afd5721000000002b03437d?source=webshare&xhsshare=pc_web&xsec_token=CBzqzf0gCYBXlyac5xb3TEo-SvoD7ba0S2SZ8hc3ljvDw=&xsec_source=pc_share",
+          "originalUrl": "https://www.xiaohongshu.com/discovery/item/6afcf4d9000000002b0379d2?source=webshare&xhsshare=pc_web&xsec_token=ABfMQNw1G167t05yZeUn5yksVVoUcVmb0OLDMBTE1fy0I=&xsec_source=pc_share",
+          "originalAuthor": {
+            "name": "冬有瓜無",
+            "profileUrl": "https://www.xiaohongshu.com/user/profile/60c6a0cb0000000001009792",
+            "avatar": "avatars/67faf9121b45652d.jpg"
+          },
+          "note": "",
+          "addedAt": "2026-11-18"
+        }
+      ],
+      "name": "胶片Boss",
+      "formerNames": [],
+      "count": 1,
+      "lastAddedAt": "2026-11-18",
+      "rank": 3
     },
     {
       "key": "xiaohongshu:65d03ec1000000000401f301",
